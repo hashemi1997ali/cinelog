@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CineLog — Journal</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome for icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="./tailwind.config.js"></script>
+
+    <style type="text/tailwindcss">
+      @layer base {
+        html {
+          scroll-behavior: smooth;
+        }
+      }
+
+      @layer components {
+        /* Layout */
+        .container {
+          @apply max-w-7xl mx-auto px-5 md:px-10;
+        }
+
+        /*  Section heading  */
+        .section-title {
+        }
+        .section-label {
+        }
+
+        /*  Buttons  */
+        .btn {
+        }
+        .btn-gold {
+        }
+        .btn-outline {
+        }
+        .btn-ghost {
+        }
+      }
+    </style>
+  </head>
+
+  <body class="font-sans bg-bg-base text-text-body antialiased">
+    <header></header>
+
+    <main></main>
+
+    <footer></footer>
+
+    <script src="./journal.js"></script>
+  </body>
+</html>
