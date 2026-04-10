@@ -49,6 +49,46 @@ function closeSearch() {
   }
 }
 
+const mobMenuBtn = document.querySelector("#mob-menu-btn");
+const mobNav = document.querySelector("#mob-nav");
+const mobMenuOverlay = document.querySelector("#mob-menu-overlay");
+const mobNavLinks = mobNav?.querySelectorAll("a");
+
+function openMobileMenu() {
+  mobMenuBtn?.classList.add("active");
+  mobNav?.classList.add("active");
+  mobMenuOverlay?.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeMobileMenu() {
+  mobMenuBtn?.classList.remove("active");
+  mobNav?.classList.remove("active");
+  mobMenuOverlay?.classList.remove("active");
+  document.body.style.overflow = "auto";
+}
+
+mobMenuBtn?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (mobMenuBtn?.classList.contains("active")) {
+    closeMobileMenu();
+  } else {
+    openMobileMenu();
+  }
+});
+
+mobMenuOverlay?.addEventListener("click", closeMobileMenu);
+
+mobNavLinks?.forEach((link) => {
+  link.addEventListener("click", closeMobileMenu);
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeMobileMenu();
+  }
+});
+
 searchToggle?.addEventListener("click", (e) => {
   e.stopPropagation();
   openSearch();
@@ -176,6 +216,8 @@ async function fetchMovies(language = "en-US", page = 1, shouldScroll = true) {
   }
 }
 
+const FAVORITES_KEY = "cinelog_favorites";
+
 async function renderMovie(movie) {
   const movieCard = document.createElement("div");
   const moviePoster = document.createElement("img");
@@ -183,8 +225,31 @@ async function renderMovie(movie) {
   const movieRating = document.createElement("p");
   const movieReleaseYear = document.createElement("p");
   const cardBottom = document.createElement("div");
+  const favoriteBtn = document.createElement("button");
 
   movieCard.classList.add("movie-card");
+
+  favoriteBtn.classList.add(
+    "favorite-btn",
+    "absolute",
+    "top-3",
+    "right-3",
+    "w-8",
+    "h-8",
+    "rounded-full",
+    "bg-bg-card/80",
+    "backdrop-blur-sm",
+    "flex",
+    "items-center",
+    "justify-center",
+    "text-text-primary",
+    "hover:text-accent",
+    "transition-colors",
+    "z-10",
+  );
+  favoriteBtn.setAttribute("aria-label", "Add to favorites");
+  favoriteBtn.innerHTML = '<i class="fa-regular fa-heart text-sm"></i>';
+  favoriteBtn.dataset.movieId = movie.id;
 
   moviePoster.src = movie.poster_path
     ? `${TMDB_IMAGE_BASE_URL}w500${movie.poster_path}`
@@ -252,6 +317,7 @@ async function renderMovie(movie) {
   );
 
   movieCard.appendChild(moviePoster);
+  movieCard.appendChild(favoriteBtn);
   movieCard.appendChild(cardBottom);
   cardBottom.appendChild(movieTitle);
   cardBottom.appendChild(movieRating);
