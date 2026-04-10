@@ -83,7 +83,19 @@
         }
 
         .movie-card {
-          @apply rounded-3xl overflow-hidden bg-bg-card border border-bg-border shadow-card transition duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-gold;
+          @apply rounded-3xl overflow-hidden bg-bg-card border border-bg-border shadow-card transition duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-gold relative;
+        }
+
+        .favorite-btn {
+          @apply opacity-70 hover:opacity-100 transition-opacity;
+        }
+
+        .favorite-btn.favorited {
+          @apply text-accent;
+        }
+
+        .favorite-btn:hover {
+          @apply scale-110;
         }
 
         .badge-rating {
@@ -146,29 +158,33 @@
         }
 
         /* Mobile nav */
-        .mob-actions {
-          @apply relative;
+        .mob-menu-overlay {
+          @apply fixed inset-0 bg-black/70 backdrop-blur-sm opacity-0 invisible transition-opacity duration-300 z-40;
+        }
+
+        .mob-menu-overlay.active {
+          @apply opacity-100 visible;
         }
 
         .mob-nav {
-          @apply fixed top-0 right-0 h-screen w-0 overflow-hidden whitespace-nowrap bg-bg-base border-l border-accent/30
-          opacity-0 invisible transition-[width,opacity] duration-300 z-50;
+          @apply fixed top-0 right-0 h-screen w-72 bg-gradient-to-b from-bg-base to-bg-card overflow-y-auto shadow-2xl transform translate-x-full transition-transform duration-300 z-50;
+          border-left: 2px solid theme("colors.accent");
         }
 
-        .mob-actions:focus-within .mob-nav {
-          @apply w-52 opacity-100 visible;
+        .mob-nav.active {
+          @apply translate-x-0;
         }
 
-        .mob-actions::before {
-          content: "";
-          @apply fixed top-0 right-0 w-screen h-screen bg-black/50
-          opacity-0 invisible
-          transition-opacity duration-300
-          z-40;
+        .btn-hamburger.active .hamburger-line:nth-child(1) {
+          @apply rotate-45 translate-y-[10px];
         }
 
-        .mob-actions:focus-within::before {
-          @apply opacity-100 visible;
+        .btn-hamburger.active .hamburger-line:nth-child(2) {
+          @apply opacity-0;
+        }
+
+        .btn-hamburger.active .hamburger-line:nth-child(3) {
+          @apply -rotate-45 -translate-y-[10px];
         }
       }
     </style>
@@ -248,41 +264,58 @@
         <div
           class="mobile-actions md:hidden flex items-center gap-3 ml-auto transition duration-300"
         >
-          <div class="mob-actions">
-            <button
-              type="button"
-              class="btn-humburger w-10 h-10 flex flex-col items-center justify-center gap-1.5 p-0"
-              aria-label="Open menu"
-            >
-              <span
-                class="w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300 origin-center"
-              ></span>
-              <span
-                class="w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
-              ></span>
-              <span
-                class="w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300 origin-center"
-              ></span>
-            </button>
-
-            <nav class="mob-nav flex flex-col gap-1 px-6 pb-5 pt-6">
-              <a
-                href="./index.html"
-                class="py-3 font-medium border-b border-bg-border/70 hover:text-accent transition-colors"
-              >
-                Discover
-              </a>
-              <a
-                href="./journal.html"
-                class="py-3 font-medium border-b border-bg-border/70 hover:text-accent transition-colors"
-              >
-                My Journal
-              </a>
-            </nav>
-          </div>
+          <button
+            id="mob-menu-btn"
+            type="button"
+            class="btn-hamburger w-10 h-10 flex flex-col items-center justify-center gap-1.5 p-0 hover:text-accent transition-colors"
+            aria-label="Open menu"
+          >
+            <span
+              class="hamburger-line w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
+            ></span>
+            <span
+              class="hamburger-line w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
+            ></span>
+            <span
+              class="hamburger-line w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
+            ></span>
+          </button>
         </div>
       </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mob-menu-overlay" class="mob-menu-overlay"></div>
+
+    <!-- Mobile Navigation Menu -->
+    <nav id="mob-nav" class="mob-nav">
+      <div class="flex flex-col h-full">
+        <div class="px-6 py-8 border-b border-bg-border/50">
+          <h2
+            class="font-headings text-2xl uppercase tracking-wide text-text-primary"
+          >
+            Menu
+          </h2>
+        </div>
+        <div class="flex-1 flex flex-col py-6">
+          <a
+            href="./index.html"
+            class="px-6 py-4 text-lg font-semibold text-text-primary hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent"
+          >
+            <i class="fa-solid fa-compass mr-3"></i>Discover
+          </a>
+          <a
+            href="./journal.html"
+            class="px-6 py-4 text-lg font-semibold text-text-body hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent"
+          >
+            <i class="fa-solid fa-book mr-3"></i>My Journal
+          </a>
+        </div>
+        <div class="px-6 py-6 border-t border-bg-border/50 text-xs text-muted">
+          <p>© 2026 CineLog</p>
+        </div>
+      </div>
+    </nav>
 
     <main>
       <section class="relative overflow-hidden">
@@ -379,6 +412,6 @@
       </div>
     </footer>
 
-    <script src="./main.js"></script>
+    <script type="module" src="./main.js"></script>
   </body>
 </html>
