@@ -140,7 +140,6 @@ async function fetchHeroMovie(language = "en-US", page = 1) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
     const data = await res.json();
-    console.log("Hero movie data:", data);
 
     heroMovies = data.results.filter((movie) => movie.backdrop_path);
 
@@ -216,7 +215,39 @@ async function fetchMovies(language = "en-US", page = 1, shouldScroll = true) {
   }
 }
 
-const FAVORITES_KEY = "cinelog_favorites";
+const STORAGE_KEY = "cinelog_favourites";
+
+function getFavorites() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+}
+
+function saveFavorites(favorites) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+}
+
+function toggleFavorite(movie, button) {
+  const favorites = getFavorites();
+  const existingIndex = favorites.findIndex((fav) => fav.id === movie.id);
+
+  if (existingIndex > -1) {
+    // Remove from favorites
+    favorites.splice(existingIndex, 1);
+    button.classList.remove("favorited");
+    button.setAttribute("aria-label", "Add to favorites");
+  } else {
+    // Add to favorites
+    const favoriteMovie = {
+      ...movie,
+      addedAt: new Date().toISOString(),
+      note: "",
+    };
+    favorites.push(favoriteMovie);
+    button.classList.add("favorited");
+    button.setAttribute("aria-label", "Remove from favorites");
+  }
+
+  saveFavorites(favorites);
+}
 
 async function renderMovie(movie) {
   const movieCard = document.createElement("div");
@@ -248,8 +279,18 @@ async function renderMovie(movie) {
     "z-10",
   );
   favoriteBtn.setAttribute("aria-label", "Add to favorites");
-  favoriteBtn.innerHTML = '<i class="fa-regular fa-heart text-sm"></i>';
+  favoriteBtn.innerHTML = '<i class="fa-solid fa-bookmark text-sm"></i>';
   favoriteBtn.dataset.movieId = movie.id;
+
+  const favorites = getFavorites();
+  if (favorites.some((fav) => fav.id === movie.id)) {
+    favoriteBtn.classList.add("favorited");
+  }
+
+  favoriteBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleFavorite(movie, favoriteBtn);
+  });
 
   moviePoster.src = movie.poster_path
     ? `${TMDB_IMAGE_BASE_URL}w500${movie.poster_path}`
