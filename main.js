@@ -1,3 +1,4 @@
+import { TMDB_BASE_URL, TMDB_IMAGE_BASE_URL, options } from "./config.js";
 const siteHeader = document.querySelector("#site-header");
 const searchToggle = document.querySelector("#search-toggle");
 const searchClose = document.querySelector("#search-close");
@@ -18,18 +19,8 @@ let heroMovies = [];
 let currentHeroIndex = 0;
 let heroInterval;
 
-const TMDB_BASE_URL = "https://api.themoviedb.org/3/movie";
-const TMDB_IMAGE_BASE_URL = "https://image.tmdb.org/t/p/";
 const PLACEHOLDER_IMAGE =
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-const options = {
-  method: "GET",
-  headers: {
-    accept: "application/json",
-    Authorization:
-      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI1YmRlZDIwZTMxYmQ2OTM3ZGFjYTc4NjM3YTE4NWE2MCIsIm5iZiI6MTc3NTUxMjgzMS45NzEsInN1YiI6IjY5ZDQyY2ZmYmYyOGI1MzhjNTMxMzhjNiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.KGd9PEUTdMvp8tdF9k8dKPKIgmo-Z5SAw8bG8tK2zJk",
-  },
-};
 
 heroImage.src = PLACEHOLDER_IMAGE;
 
