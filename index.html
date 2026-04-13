@@ -46,10 +46,12 @@
       }
 
       @layer components {
+        /* Layout */
         .container {
           @apply max-w-7xl mx-auto px-8;
         }
 
+        /*  Section heading  */
         .section-label {
           @apply font-body uppercase tracking-[0.24em] text-sm md:text-base font-bold text-text-gold;
         }
@@ -58,8 +60,12 @@
           @apply font-headings uppercase text-text-primary leading-[0.9] text-5xl sm:text-6xl md:text-7xl lg:text-8xl;
         }
 
+        /*  Buttons  */
         .btn {
           @apply inline-flex items-center justify-center gap-3 rounded-2xl px-6 py-3.5 font-body font-bold text-base transition duration-300 border;
+        }
+        .btn:disabled {
+          @apply opacity-50 cursor-not-allowed hover:bg-current hover:border-current hover:translate-y-0;
         }
 
         .btn-gold {
@@ -74,14 +80,11 @@
           @apply btn bg-bg-card/60 text-text-body border-bg-border hover:text-text-primary hover:bg-bg-textarea;
         }
 
-        .btn:disabled {
-          @apply opacity-50 cursor-not-allowed hover:bg-current hover:border-current hover:translate-y-0;
-        }
-
         .glass-panel {
           @apply bg-bg-card/70 backdrop-blur-md border border-bg-border;
         }
 
+        /*  Cards  */
         .movie-card {
           @apply rounded-3xl overflow-hidden bg-bg-card border border-bg-border shadow-card transition duration-300 hover:-translate-y-1 hover:border-accent hover:shadow-gold relative;
         }

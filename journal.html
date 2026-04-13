@@ -28,28 +28,20 @@
         html {
           scroll-behavior: smooth;
         }
+
         body {
-          @apply flex flex-col min-h-screen font-body bg-bg-base text-text-body antialiased;
-        }
-
-        body::before {
-          content: "";
-          position: fixed;
-          inset: 0;
-          background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-          pointer-events: none;
-          z-index: 999;
-          opacity: 0.4;
-        }
-
-        ::-webkit-scrollbar {
-          width: 5px;
-        }
-        ::-webkit-scrollbar-track {
-          @apply bg-bg-base;
-        }
-        ::-webkit-scrollbar-thumb {
-          @apply bg-bg-border rounded-full;
+          @apply bg-bg-base text-text-body;
+          background-image:
+            radial-gradient(
+              circle at top right,
+              rgba(245, 158, 11, 0.08),
+              transparent 22%
+            ),
+            radial-gradient(
+              circle at left center,
+              rgba(46, 43, 68, 0.18),
+              transparent 28%
+            );
         }
       }
 
@@ -58,20 +50,6 @@
         .container {
           @apply max-w-7xl mx-auto px-5 md:px-10;
         }
-        .btn {
-          @apply inline-flex items-center justify-center gap-2
-                 font-semibold rounded-xl px-5 py-2.5 text-sm
-                 transition-all duration-200 cursor-pointer
-                 active:scale-95 select-none;
-        }
-        .btn-gold {
-          @apply btn bg-accent text-cinema-900
-                 hover:bg-accent-dark hover:shadow-gold;
-        }
-        .btn-danger {
-          @apply btn border border-red-500/30 text-red-400
-                 hover:bg-red-500/10 hover:border-red-500;
-        }
 
         /*  Section heading  */
         .section-title {
@@ -79,6 +57,117 @@
         }
         .section-label {
           @apply text-accent text-xs font-semibold uppercase tracking-[0.2em] mb-2;
+        }
+
+        /*  Buttons  */
+        .btn {
+          @apply inline-flex items-center justify-center gap-3 rounded-2xl px-6 py-3.5 font-body font-bold text-base transition duration-300 border;
+        }
+
+        .btn-gold {
+          @apply btn bg-accent text-bg-base border-accent shadow-gold hover:bg-accent-dark hover:border-accent-dark hover:-translate-y-0.5;
+        }
+
+        .btn-danger {
+          @apply btn border border-red-500/30 text-red-400
+                 hover:bg-red-500/10 hover:border-red-500;
+        }
+
+        .btn-outline {
+          @apply btn bg-bg-textarea/40 text-text-primary border-bg-border hover:bg-bg-textarea hover:border-accent/40 hover:-translate-y-0.5;
+        }
+
+        .btn-ghost {
+          @apply btn bg-bg-card/60 text-text-body border-bg-border hover:text-text-primary hover:bg-bg-textarea;
+        }
+
+        .glass-panel {
+          @apply bg-bg-card/70 backdrop-blur-md border border-bg-border;
+        }
+
+        /* Search */
+        .search-wrap {
+          @apply shrink-0;
+        }
+
+        .search-form {
+          @apply absolute top-0 bottom-0 left-8 right-8 w-auto h-10 opacity-0 my-auto pointer-events-none transition-all duration-300 rounded-2xl;
+        }
+
+        .search-form:hover .search-input,
+        .search-form:focus-within .search-input {
+          @apply border-accent shadow-gold;
+        }
+
+        .search-form:hover .search-submit,
+        .search-form:hover .search-close-btn {
+          @apply text-accent;
+        }
+
+        .search-input {
+          @apply h-full w-full rounded-2xl border border-bg-border bg-bg-card/95 text-text-primary placeholder-muted pl-12 pr-12 outline-none transition duration-300;
+        }
+
+        #site-header.search-open .search-form {
+          @apply opacity-100 pointer-events-auto;
+        }
+
+        #site-header.search-open .site-logo {
+          @apply opacity-0 -translate-x-4 pointer-events-none;
+        }
+
+        #site-header.search-open #search-toggle {
+          @apply opacity-0 pointer-events-none scale-95;
+        }
+
+        #site-header.search-open .desktop-nav {
+          @apply opacity-0 pointer-events-none;
+        }
+
+        #site-header.search-open .mobile-actions {
+          @apply opacity-0 pointer-events-none;
+        }
+
+        /* Mobile nav */
+        .mob-menu-overlay {
+          @apply fixed inset-0 bg-black/70 backdrop-blur-sm opacity-0 invisible transition-opacity duration-300 z-40;
+        }
+
+        .mob-menu-overlay.active {
+          @apply opacity-100 visible;
+        }
+
+        .mob-nav {
+          @apply fixed top-0 right-0 h-screen w-72 bg-gradient-to-b from-bg-base to-bg-card overflow-y-auto shadow-2xl transform translate-x-full transition-transform duration-300 z-50;
+          border-left: 2px solid theme("colors.accent");
+        }
+
+        .input-dark {
+          @apply w-full rounded-2xl border border-bg-border bg-bg-card/70 text-text-primary placeholder-muted px-5 py-4 outline-none transition focus:border-accent focus:shadow-gold-sm;
+        }
+
+        .mobile-icon-btn {
+          @apply grid h-10 w-10 place-items-center rounded-2xl text-text-primary transition duration-300;
+        }
+
+        .site-logo {
+          @apply flex flex-1 items-center gap-3 shrink-0 transition-all duration-300;
+        }
+
+        .mob-nav.active {
+          @apply translate-x-0;
+        }
+
+        .btn-hamburger.active .hamburger-line:nth-child(1) {
+          @apply rotate-45 translate-y-[10px];
+        }
+
+        .btn-hamburger.active .hamburger-line:nth-child(2) {
+          @apply opacity-0;
+        }
+
+        .btn-hamburger.active .hamburger-line:nth-child(3) {
+          @apply -rotate-45 -translate-y-[10px];
         }
 
         /*  Rating badge  */
@@ -123,10 +212,130 @@
 
   <body>
     <header
-      class="sticky top-0 z-40 bg-bg-base/80 backdrop-blur-md border-b border-bg-border/50 uppercase h-32 flex items-center justify-center"
+      id="site-header"
+      class="sticky top-0 z-50 border-b border-bg-border/70 bg-bg-base/80 backdrop-blur-lg"
     >
-      header
+      <div
+        class="relative container flex items-center justify-between gap-4 py-4"
+      >
+        <!-- Logo -->
+        <a href="./index.html" id="site-logo" class="site-logo">
+          <span
+            class="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-bg-base shadow-gold"
+          >
+            <i class="fa-solid fa-film text-lg"></i>
+          </span>
+          <span
+            class="font-headings text-4xl uppercase tracking-wide text-text-primary"
+          >
+            Cine<span class="text-text-gold">Log</span>
+          </span>
+        </a>
+
+        <!-- Search -->
+        <div class="search-wrap">
+          <button
+            id="search-toggle"
+            type="button"
+            aria-label="Open search"
+            class="mobile-icon-btn"
+          >
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+
+          <form id="search-form" class="search-form" role="search">
+            <button
+              type="submit"
+              aria-label="Submit search"
+              class="search-submit absolute left-4 top-1/2 -translate-y-1/2 text-muted hover:text-accent transition"
+            >
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+
+            <input
+              id="search-input"
+              type="text"
+              placeholder="Search movies"
+              class="search-input"
+            />
+
+            <button
+              id="search-close"
+              type="button"
+              aria-label="Close search"
+              class="search-close-btn absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-text-primary transition"
+            >
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </form>
+        </div>
+
+        <!-- Desktop nav -->
+        <nav
+          class="desktop-nav hidden md:flex items-center gap-8 text-lg font-bold text-text-body transition duration-300"
+        >
+          <a href="./index.html" class="text-text-primary">Discover</a>
+          <a href="./journal.html" class="hover:text-text-primary transition">
+            My Journal
+          </a>
+        </nav>
+
+        <!-- Mobile actions -->
+        <div
+          class="mobile-actions md:hidden flex items-center gap-3 ml-auto transition duration-300"
+        >
+          <button
+            id="mob-menu-btn"
+            type="button"
+            class="btn-hamburger w-10 h-10 flex flex-col items-center justify-center gap-1.5 p-0 hover:text-accent transition-colors"
+            aria-label="Open menu"
+          >
+            <span
+              class="hamburger-line w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
+            ></span>
+            <span
+              class="hamburger-line w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
+            ></span>
+            <span
+              class="hamburger-line w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
+            ></span>
+          </button>
+        </div>
+      </div>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mob-menu-overlay" class="mob-menu-overlay"></div>
+
+    <!-- Mobile Navigation Menu -->
+    <nav id="mob-nav" class="mob-nav">
+      <div class="flex flex-col h-full">
+        <div class="px-6 py-8 border-b border-bg-border/50">
+          <h2
+            class="font-headings text-2xl uppercase tracking-wide text-text-primary"
+          >
+            Menu
+          </h2>
+        </div>
+        <div class="flex-1 flex flex-col py-6">
+          <a
+            href="./index.html"
+            class="px-6 py-4 text-lg font-semibold text-text-primary hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent"
+          >
+            <i class="fa-solid fa-compass mr-3"></i>Discover
+          </a>
+          <a
+            href="./journal.html"
+            class="px-6 py-4 text-lg font-semibold text-text-body hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent"
+          >
+            <i class="fa-solid fa-book mr-3"></i>My Journal
+          </a>
+        </div>
+        <div class="px-6 py-6 border-t border-bg-border/50 text-xs text-muted">
+          <p>© 2026 CineLog</p>
+        </div>
+      </div>
+    </nav>
 
     <main class="flex-1">
       <!-- JOURNAL HERO -->
@@ -200,12 +409,20 @@
       <!-- END JOURNAL ENTRIES LIST -->
     </main>
 
-    <footer
-      class="border-t border-bg-border/50 py-8 mt-10 h-32 flex items-center justify-center uppercase"
-    >
-      footer
+    <footer class="border-t border-bg-border/70 py-8">
+      <div
+        class="container flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+      >
+        <p class="text-sm text-muted">
+          © 2026 CineLog. Personal movie journal project.
+        </p>
+        <p class="text-sm text-muted">
+          This product uses the TMDB API but is not endorsed or certified by
+          TMDB.
+        </p>
+      </div>
     </footer>
 
-    <script src="./journal.js"></script>
+    <script type="module" src="./journal.js"></script>
   </body>
 </html>

@@ -1,5 +1,5 @@
+import { TMDB_BASE_URL, TMDB_IMAGE_BASE_URL, options } from "./config.js";
 /* STORAGE */
-
 const STORAGE_KEY = "cinelog_favourites";
 
 function getFavourites() {
@@ -25,12 +25,14 @@ function ratingBadge(rating) {
 const IMG_BASE = "https://image.tmdb.org/t/p";
 
 function journalCardHTML(movie) {
+  console.log('movie', movie);
+  
   return `
     <div class="journal-card animate-fade-up" data-id="${movie.id}">
 
       <img
         class="journal-poster"
-        src="${IMG_BASE}/w342${movie.poster}"
+        src="${TMDB_IMAGE_BASE_URL}/w342${movie.poster_path}"
         alt="${movie.title}"
       />
 
@@ -42,7 +44,7 @@ function journalCardHTML(movie) {
               ${movie.title}
             </h2>
             <div class="flex items-center gap-2 mt-1.5">
-              ${ratingBadge(movie.rating)}
+              ${ratingBadge(movie.vote_average)}
               <span class="text-muted text-xs">${movie.year}</span>
             </div>
           </div>

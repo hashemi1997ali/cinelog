@@ -1,3 +1,5 @@
+console.log(233143);
+
 import { TMDB_BASE_URL, TMDB_IMAGE_BASE_URL, options } from "./config.js";
 const siteHeader = document.querySelector("#site-header");
 const searchToggle = document.querySelector("#search-toggle");
@@ -9,7 +11,15 @@ const prevBtn = document.querySelector("#prev-btn");
 const nextBtn = document.querySelector("#next-btn");
 const currentPageSpan = document.querySelector("#current-page");
 const totalPagesSpan = document.querySelector("#total-pages");
+const mobMenuBtn = document.querySelector("#mob-menu-btn");
+const mobNav = document.querySelector("#mob-nav");
+const mobMenuOverlay = document.querySelector("#mob-menu-overlay");
+const mobNavLinks = mobNav?.querySelectorAll("a");
 const heroImage = document.querySelector("#hero-image");
+
+const PLACEHOLDER_IMAGE =
+  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+heroImage.src = PLACEHOLDER_IMAGE;
 
 let language = "en-US";
 let currentPage = 1;
@@ -19,10 +29,15 @@ let heroMovies = [];
 let currentHeroIndex = 0;
 let heroInterval;
 
-const PLACEHOLDER_IMAGE =
-  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+const STORAGE_KEY = "cinelog_favourites";
 
-heroImage.src = PLACEHOLDER_IMAGE;
+function getFavorites() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+}
+
+function saveFavorites(favorites) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+}
 
 function openSearch() {
   siteHeader?.classList.add("search-open");
@@ -39,11 +54,6 @@ function closeSearch() {
     searchInput.value = "";
   }
 }
-
-const mobMenuBtn = document.querySelector("#mob-menu-btn");
-const mobNav = document.querySelector("#mob-nav");
-const mobMenuOverlay = document.querySelector("#mob-menu-overlay");
-const mobNavLinks = mobNav?.querySelectorAll("a");
 
 function openMobileMenu() {
   mobMenuBtn?.classList.add("active");
@@ -125,8 +135,10 @@ document.addEventListener("keydown", (e) => {
 
 async function fetchHeroMovie(language = "en-US", page = 1) {
   try {
-    const url = `${TMDB_BASE_URL}/now_playing?language=${language}&page=${page}`;
+    const url = `${TMDB_BASE_URL}/movie/now_playing?language=${language}&page=${page}`;
     const res = await fetch(url, options);
+    console.log('res', res);
+    
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -169,7 +181,7 @@ function updateHeroImage() {
 
 async function fetchMovies(language = "en-US", page = 1, shouldScroll = true) {
   try {
-    const url = `${TMDB_BASE_URL}/popular?language=${language}&page=${page}`;
+    const url = `${TMDB_BASE_URL}/movie/popular?language=${language}&page=${page}`;
     const res = await fetch(url, options);
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -204,16 +216,6 @@ async function fetchMovies(language = "en-US", page = 1, shouldScroll = true) {
   } catch (error) {
     console.error("Error fetching movies:", error);
   }
-}
-
-const STORAGE_KEY = "cinelog_favourites";
-
-function getFavorites() {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-}
-
-function saveFavorites(favorites) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
 }
 
 function toggleFavorite(movie, button) {
@@ -274,6 +276,8 @@ async function renderMovie(movie) {
   favoriteBtn.dataset.movieId = movie.id;
 
   const favorites = getFavorites();
+  console.log('favorites', favorites);
+  
   if (favorites.some((fav) => fav.id === movie.id)) {
     favoriteBtn.classList.add("favorited");
   }
