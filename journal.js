@@ -42,6 +42,18 @@ function updateFavBadge() {
   }
 }
 
+function getRatingStyle(vote) {
+  if (vote >= 7) {
+    return ["bg-rating-high/20", "text-rating-high", "border-rating-high/40"];
+  }
+
+  if (vote >= 5) {
+    return ["bg-rating-mid/20", "text-rating-mid", "border-rating-mid/40"];
+  }
+
+  return ["bg-rating-low/20", "text-rating-low", "border-rating-low/40"];
+}
+
 /* SEARCH */
 const searchDialog = document.getElementById("search-dialog");
 const searchInput = document.getElementById("search-input");
@@ -87,6 +99,10 @@ function showSearchState(state) {
 function searchResultHTML(movie) {
   const poster = `${TMDB_IMAGE_BASE_URL}/w92${movie.poster_path}`;
   const isFav = isFavourite(movie.id);
+  const style = getRatingStyle(movie.vote_average);
+  const year = movie.release_date
+    ? new Date(movie.release_date).getFullYear()
+    : "N/A";
 
   return `
     <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-bg-raised
@@ -96,8 +112,8 @@ function searchResultHTML(movie) {
       <div class="flex-1 min-w-0">
         <p class="text-text-primary font-semibold text-sm truncate">${movie.title}</p>
         <div class="flex items-center gap-2 mt-0.5">
-          ${ratingBadge(movie.vote_average)}
-          <span class="text-muted text-xs">${movie.year}</span>
+          <span class="text-left w-fit text-xs font-bold rounded-xl px-2 py-1 ${style.join(" ")}">★ ${movie.vote_average.toFixed(1)}</span>
+          <span class="text-right text-xs font-bold text-muted py-1">${year}</span>
         </div>
       </div>
       <button class="search-fav-btn btn-outline text-xs px-3 py-1.5 shrink-0
@@ -213,19 +229,14 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-/* RATING BADGE  */
-
-function ratingBadge(rating) {
-  const item = rating.toFixed(1);
-  let cls = "rating-mid";
-  if (rating >= 7) cls = "rating-high";
-  if (rating < 5) cls = "rating-low";
-  return `<span class="${cls}"><i class="fa-solid fa-star text-[10px]"></i> ${item}</span>`;
-}
-
 /* JOURNAL CARD */
 
 function journalCardHTML(movie) {
+  const style = getRatingStyle(movie.vote_average);
+  const year = movie.release_date
+    ? new Date(movie.release_date).getFullYear()
+    : "N/A";
+
   return `
     <div class="journal-card animate-fade-up" data-id="${movie.id}">
 
@@ -243,8 +254,8 @@ function journalCardHTML(movie) {
               ${movie.title}
             </h2>
             <div class="flex items-center gap-2 mt-1.5">
-              ${ratingBadge(movie.vote_average)}
-              <span class="text-muted text-xs">${movie.year}</span>
+              <span class="text-left w-fit text-sm font-bold rounded-xl px-3 py-1.5 ${style.join(" ")}">★ ${movie.vote_average.toFixed(1)}</span>
+              <span class="text-right text-sm font-bold text-muted py-1.5">${year}</span>
             </div>
           </div>
           <button

@@ -60,16 +60,6 @@ function updateFavBadge() {
   }
 }
 
-/* RATING BADGE  */
-
-function ratingBadge(rating) {
-  const item = rating.toFixed(1);
-  let cls = "rating-mid";
-  if (rating >= 7) cls = "rating-high";
-  if (rating < 5) cls = "rating-low";
-  return `<span class="${cls}"><i class="fa-solid fa-star text-[10px]"></i> ${item}</span>`;
-}
-
 function openMobileMenu() {
   mobMenuBtn?.classList.add("active");
   mobNav?.classList.add("active");
@@ -109,7 +99,7 @@ async function fetchHeroMovie(language = "en-US", page = 1) {
   try {
     const url = `${TMDB_BASE_URL}/movie/now_playing?language=${language}&page=${page}`;
     const res = await fetch(url, options);
-    
+
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -213,6 +203,18 @@ function toggleFavorite(movie, button) {
   saveFavourites(favorites);
 }
 
+function getRatingStyle(vote) {
+  if (vote >= 7) {
+    return ["bg-rating-high/20", "text-rating-high", "border-rating-high/40"];
+  }
+
+  if (vote >= 5) {
+    return ["bg-rating-mid/20", "text-rating-mid", "border-rating-mid/40"];
+  }
+
+  return ["bg-rating-low/20", "text-rating-low", "border-rating-low/40"];
+}
+
 async function renderMovie(movie) {
   const movieCard = document.createElement("div");
   const moviePoster = document.createElement("img");
@@ -247,7 +249,7 @@ async function renderMovie(movie) {
   favoriteBtn.dataset.movieId = movie.id;
 
   const favorites = getFavourites();
-  
+
   if (favorites.some((fav) => fav.id === movie.id)) {
     favoriteBtn.classList.add("favorited");
   }
@@ -279,18 +281,6 @@ async function renderMovie(movie) {
     "text-text-primary",
     "line-clamp-1",
   );
-
-  function getRatingStyle(vote) {
-    if (vote >= 7) {
-      return ["bg-rating-high/20", "text-rating-high", "border-rating-high/40"];
-    }
-
-    if (vote >= 5) {
-      return ["bg-rating-mid/20", "text-rating-mid", "border-rating-mid/40"];
-    }
-
-    return ["bg-rating-low/20", "text-rating-low", "border-rating-low/40"];
-  }
 
   const style = getRatingStyle(movie.vote_average);
 
@@ -390,6 +380,10 @@ function showSearchState(state) {
 function searchResultHTML(movie) {
   const poster = `${TMDB_IMAGE_BASE_URL}/w92${movie.poster_path}`;
   const isFav = isFavourite(movie.id);
+  const style = getRatingStyle(movie.vote_average);
+  const year = movie.release_date
+    ? new Date(movie.release_date).getFullYear()
+    : "N/A";
 
   return `
     <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-bg-raised
@@ -399,8 +393,8 @@ function searchResultHTML(movie) {
       <div class="flex-1 min-w-0">
         <p class="text-text-primary font-semibold text-sm truncate">${movie.title}</p>
         <div class="flex items-center gap-2 mt-0.5">
-          ${ratingBadge(movie.vote_average)}
-          <span class="text-muted text-xs">${movie.year}</span>
+          <span class="text-left w-fit text-xs font-bold rounded-xl px-2 py-1 ${style.join(" ")}">★ ${movie.vote_average.toFixed(1)}</span>
+          <span class="text-right text-xs font-bold text-muted py-1">${year}</span>
         </div>
       </div>
       <button class="search-fav-btn btn-outline text-xs px-3 py-1.5 shrink-0

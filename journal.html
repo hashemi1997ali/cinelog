@@ -44,28 +44,38 @@
             );
         }
 
-        ::-webkit-scrollbar        { width: 5px; }
-        ::-webkit-scrollbar-track  { @apply bg-bg-base; }
-        ::-webkit-scrollbar-thumb  { @apply bg-bg-border rounded-full; }
+        ::-webkit-scrollbar {
+          width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+          @apply bg-bg-base;
+        }
+        ::-webkit-scrollbar-thumb {
+          @apply bg-bg-border rounded-full;
+        }
       }
 
       @layer components {
         /* Layout */
         .container {
-          @apply max-w-7xl mx-auto px-5 md:px-10;
+          @apply max-w-7xl mx-auto px-8 md:px-10;
         }
 
         /*  Section heading  */
-        .section-title {
-          @apply font-headings text-4xl md:text-5xl text-text-primary tracking-wide;
-        }
         .section-label {
-          @apply text-accent text-xs font-semibold uppercase tracking-[0.2em] mb-2;
+          @apply font-body uppercase tracking-[0.24em] text-sm md:text-base font-bold text-text-gold;
+        }
+
+        .section-title {
+          @apply font-headings uppercase text-text-primary leading-[0.9] text-5xl sm:text-6xl md:text-7xl lg:text-8xl;
         }
 
         /*  Buttons  */
         .btn {
           @apply inline-flex items-center justify-center gap-3 rounded-2xl px-6 py-3.5 font-body font-bold text-base transition duration-300 border;
+        }
+        .btn:disabled {
+          @apply opacity-50 cursor-not-allowed hover:bg-current hover:border-current hover:translate-y-0;
         }
 
         .btn-gold {
@@ -131,21 +141,6 @@
           @apply -rotate-45 -translate-y-[10px];
         }
 
-        /*  Rating badge  */
-        .rating-badge {
-          @apply inline-flex items-center gap-1
-                 text-xs font-bold px-2 py-1 rounded-lg;
-        }
-        .rating-high {
-          @apply rating-badge bg-green-500/20 text-green-400;
-        }
-        .rating-mid {
-          @apply rating-badge bg-gold-500/20 text-gold-400;
-        }
-        .rating-low {
-          @apply rating-badge bg-red-500/20 text-red-400;
-        }
-
         /* Journal card  */
         .journal-card {
           @apply flex flex-col sm:flex-row gap-5
@@ -155,8 +150,7 @@
                  hover:border-accent/30 hover:shadow-card;
         }
         .journal-poster {
-          @apply w-full sm:w-36 shrink-0 aspect-[2/3] sm:aspect-auto
-                 object-cover;
+          @apply w-full sm:w-52 sm:max-w-[40%] aspect-[2/3] object-cover;
         }
 
         /* Notes textarea */
@@ -182,7 +176,7 @@
     </style>
   </head>
 
-  <body>
+  <body class="font-body bg-bg-base text-text-body antialiased">
     <header
       id="site-header"
       class="sticky top-0 z-50 border-b border-bg-border/70 bg-bg-base/80 backdrop-blur-lg"
@@ -204,18 +198,18 @@
           </span>
         </a>
 
-
         <!-- Desktop nav -->
         <nav
           class="desktop-nav hidden md:flex items-center gap-8 text-lg font-bold text-text-body transition duration-300"
         >
-          <button id="open-search"
-                  class="btn-outline text-sm gap-2 hidden md:inline-flex">
+          <button
+            id="open-search"
+            class="btn-outline text-sm gap-2 hidden md:inline-flex"
+          >
             <i class="fa-solid fa-magnifying-glass text-xs"></i>
             Search movies
           </button>
-          <button id="open-search"
-                  class="md:hidden btn-ghost p-2.5 rounded-xl">
+          <button id="open-search" class="md:hidden btn-ghost p-2.5 rounded-xl">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
           <a href="./index.html" class="hover:text-text-primary">Discover</a>
@@ -228,8 +222,10 @@
         <div
           class="mobile-actions md:hidden flex items-center gap-3 ml-auto transition duration-300"
         >
-          <button id="open-search-mobile"
-                  class="md:hidden btn-ghost p-2.5 rounded-xl">
+          <button
+            id="open-search-mobile"
+            class="md:hidden btn-ghost p-2.5 rounded-xl"
+          >
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
           <button
@@ -285,7 +281,7 @@
       </div>
     </nav>
 
-    <main class="flex-1">
+    <main>
       <!-- JOURNAL HERO -->
       <section class="py-14 border-b border-bg-border/50">
         <div
@@ -293,10 +289,8 @@
         >
           <div class="animate-fade-up">
             <p class="section-label">Personal collection</p>
-            <h1
-              class="font-headings text-6xl md:text-7xl text-text-primary tracking-wide leading-none mb-3"
-            >
-              My <span class="text-accent">Journal</span>
+            <h1 class="section-title">
+              My <span class="text-text-gold">Journal</span>
             </h1>
             <p class="text-text-body max-w-md">
               Your saved films and personal notes — all in one place.
@@ -357,9 +351,13 @@
       <!-- END JOURNAL ENTRIES LIST -->
     </main>
 
-    
     <!-- search modal -->
-    <div id="search-dialog" class="dialog-backdrop hidden" role="dialog" aria-modal="true">
+    <div
+      id="search-dialog"
+      class="dialog-backdrop hidden"
+      role="dialog"
+      aria-modal="true"
+    >
       <div class="dialog-box animate-fade-up">
         <div class="flex items-center gap-3 p-4 border-b border-bg-border">
           <i class="fa-solid fa-magnifying-glass text-accent"></i>
@@ -381,15 +379,25 @@
             <p class="text-muted text-sm">Type to search for movies…</p>
           </div>
           <div id="search-loading" class="hidden text-center py-10">
-            <i class="fa-solid fa-spinner fa-spin text-accent text-2xl mb-3 block"></i>
+            <i
+              class="fa-solid fa-spinner fa-spin text-accent text-2xl mb-3 block"
+            ></i>
             <p class="text-muted text-sm">Searching…</p>
           </div>
           <div id="search-empty" class="hidden text-center py-10">
             <i class="fa-solid fa-face-meh text-3xl text-muted mb-3 block"></i>
-            <p class="text-text-body">No results for <strong id="search-query-display" class="text-accent"></strong></p>
-            <p class="text-muted text-sm mt-1">Try a different title or keyword.</p>
+            <p class="text-text-body">
+              No results for
+              <strong id="search-query-display" class="text-accent"></strong>
+            </p>
+            <p class="text-muted text-sm mt-1">
+              Try a different title or keyword.
+            </p>
           </div>
-          <div id="search-results-list" class="hidden flex flex-col gap-3"></div>
+          <div
+            id="search-results-list"
+            class="hidden flex flex-col gap-3"
+          ></div>
         </div>
       </div>
     </div>
