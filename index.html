@@ -43,12 +43,22 @@
               transparent 28%
             );
         }
+
+        ::-webkit-scrollbar {
+          width: 5px;
+        }
+        ::-webkit-scrollbar-track {
+          @apply bg-bg-base;
+        }
+        ::-webkit-scrollbar-thumb {
+          @apply bg-bg-border rounded-full;
+        }
       }
 
       @layer components {
         /* Layout */
         .container {
-          @apply max-w-7xl mx-auto px-8;
+          @apply max-w-7xl mx-auto px-8 md:px-10;
         }
 
         /*  Section heading  */
@@ -189,18 +199,18 @@
           </span>
         </a>
 
-
         <!-- Desktop nav -->
         <nav
           class="desktop-nav hidden md:flex items-center gap-8 text-lg font-bold text-text-body transition duration-300"
         >
-          <button id="open-search"
-                  class="btn-outline text-sm gap-2 hidden md:inline-flex">
+          <button
+            id="open-search"
+            class="btn-outline text-sm gap-2 hidden md:inline-flex"
+          >
             <i class="fa-solid fa-magnifying-glass text-xs"></i>
             Search movies
           </button>
-          <button id="open-search"
-                  class="md:hidden btn-ghost p-2.5 rounded-xl">
+          <button id="open-search" class="md:hidden btn-ghost p-2.5 rounded-xl">
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
           <a href="./index.html" class="hover:text-text-primary">Discover</a>
@@ -213,8 +223,10 @@
         <div
           class="mobile-actions md:hidden flex items-center gap-3 ml-auto transition duration-300"
         >
-          <button id="open-search-mobile"
-                  class="md:hidden btn-ghost p-2.5 rounded-xl">
+          <button
+            id="open-search-mobile"
+            class="md:hidden btn-ghost p-2.5 rounded-xl"
+          >
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
           <button
@@ -351,9 +363,13 @@
       </section>
     </main>
 
-    
     <!-- search modal -->
-    <div id="search-dialog" class="dialog-backdrop hidden" role="dialog" aria-modal="true">
+    <div
+      id="search-dialog"
+      class="dialog-backdrop hidden"
+      role="dialog"
+      aria-modal="true"
+    >
       <div class="dialog-box animate-fade-up">
         <div class="flex items-center gap-3 p-4 border-b border-bg-border">
           <i class="fa-solid fa-magnifying-glass text-accent"></i>
@@ -375,15 +391,25 @@
             <p class="text-muted text-sm">Type to search for movies…</p>
           </div>
           <div id="search-loading" class="hidden text-center py-10">
-            <i class="fa-solid fa-spinner fa-spin text-accent text-2xl mb-3 block"></i>
+            <i
+              class="fa-solid fa-spinner fa-spin text-accent text-2xl mb-3 block"
+            ></i>
             <p class="text-muted text-sm">Searching…</p>
           </div>
           <div id="search-empty" class="hidden text-center py-10">
             <i class="fa-solid fa-face-meh text-3xl text-muted mb-3 block"></i>
-            <p class="text-text-body">No results for <strong id="search-query-display" class="text-accent"></strong></p>
-            <p class="text-muted text-sm mt-1">Try a different title or keyword.</p>
+            <p class="text-text-body">
+              No results for
+              <strong id="search-query-display" class="text-accent"></strong>
+            </p>
+            <p class="text-muted text-sm mt-1">
+              Try a different title or keyword.
+            </p>
           </div>
-          <div id="search-results-list" class="hidden flex flex-col gap-3"></div>
+          <div
+            id="search-results-list"
+            class="hidden flex flex-col gap-3"
+          ></div>
         </div>
       </div>
     </div>
