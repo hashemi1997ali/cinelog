@@ -27,6 +27,7 @@
       @layer base {
         html {
           scroll-behavior: smooth;
+          scrollbar-gutter: stable;
         }
 
         body {
@@ -298,7 +299,7 @@
         <div
           class="container relative grid min-h-[78vh] items-center py-16 lg:grid-cols-[1.05fr_0.95fr]"
         >
-          <div class="max-w-2xl">
+          <div class="max-w-2xl animate-fade-up">
             <p class="section-label mb-6">Now Trending</p>
             <h1 class="section-title mb-8">
               Discover<br />
@@ -316,8 +317,10 @@
 
       <section class="py-16 md:py-20">
         <div class="container">
-          <p class="section-label mb-4">TMDB · Popular</p>
-          <div class="flex items-end justify-between gap-6 mb-10">
+          <p class="section-label mb-4 animate-fade-up">TMDB · Popular</p>
+          <div
+            class="flex items-end justify-between gap-6 mb-10 animate-fade-up"
+          >
             <h2
               class="section-title text-4xl sm:text-5xl md:text-6xl lg:text-7xl"
             >
