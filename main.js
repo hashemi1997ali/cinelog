@@ -1,15 +1,18 @@
 import { TMDB_BASE_URL, TMDB_IMAGE_BASE_URL, options } from "./config.js";
-const siteHeader = document.querySelector("#site-header");
-const searchToggle = document.querySelector("#search-toggle");
-const searchClose = document.querySelector("#search-close");
-const searchInput = document.querySelector("#search-input");
-const searchForm = document.querySelector("#search-form");
 const moviesGrid = document.querySelector("#movies-grid");
 const prevBtn = document.querySelector("#prev-btn");
 const nextBtn = document.querySelector("#next-btn");
 const currentPageSpan = document.querySelector("#current-page");
 const totalPagesSpan = document.querySelector("#total-pages");
+const mobMenuBtn = document.querySelector("#mob-menu-btn");
+const mobNav = document.querySelector("#mob-nav");
+const mobMenuOverlay = document.querySelector("#mob-menu-overlay");
+const mobNavLinks = mobNav?.querySelectorAll("a");
 const heroImage = document.querySelector("#hero-image");
+
+const PLACEHOLDER_IMAGE =
+  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+heroImage.src = PLACEHOLDER_IMAGE;
 
 let language = "en-US";
 let currentPage = 1;
@@ -19,31 +22,53 @@ let heroMovies = [];
 let currentHeroIndex = 0;
 let heroInterval;
 
-const PLACEHOLDER_IMAGE =
-  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+const STORAGE_KEY = "cinelog_favourites";
 
-heroImage.src = PLACEHOLDER_IMAGE;
-
-function openSearch() {
-  siteHeader?.classList.add("search-open");
-
-  setTimeout(() => {
-    searchInput?.focus();
-  }, 220);
+function getFavourites() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 }
 
-function closeSearch() {
-  siteHeader?.classList.remove("search-open");
+function saveFavourites(favorites) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
+}
 
-  if (searchInput) {
-    searchInput.value = "";
+function isFavourite(movieId) {
+  return getFavourites().some((m) => m.id === movieId);
+}
+
+function toggleFavourite(movie) {
+  let favs = getFavourites();
+  if (isFavourite(movie.id)) {
+    favs = favs.filter((m) => m.id !== movie.id);
+  } else {
+    favs.unshift({ ...movie, note: "" });
+  }
+  saveFavourites(favs);
+  updateFavBadge();
+}
+function updateFavBadge() {
+  const count = getFavourites().length;
+  const badge = document.getElementById("fav-count-badge");
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.classList.remove("hidden");
+    badge.classList.add("flex");
+  } else {
+    badge.classList.add("hidden");
+    badge.classList.remove("flex");
   }
 }
 
-const mobMenuBtn = document.querySelector("#mob-menu-btn");
-const mobNav = document.querySelector("#mob-nav");
-const mobMenuOverlay = document.querySelector("#mob-menu-overlay");
-const mobNavLinks = mobNav?.querySelectorAll("a");
+/* RATING BADGE  */
+
+function ratingBadge(rating) {
+  const item = rating.toFixed(1);
+  let cls = "rating-mid";
+  if (rating >= 7) cls = "rating-high";
+  if (rating < 5) cls = "rating-low";
+  return `<span class="${cls}"><i class="fa-solid fa-star text-[10px]"></i> ${item}</span>`;
+}
 
 function openMobileMenu() {
   mobMenuBtn?.classList.add("active");
@@ -80,53 +105,11 @@ document.addEventListener("keydown", (e) => {
   }
 });
 
-searchToggle?.addEventListener("click", (e) => {
-  e.stopPropagation();
-  openSearch();
-});
-
-searchClose?.addEventListener("click", (e) => {
-  e.stopPropagation();
-  closeSearch();
-});
-
-searchForm?.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const query = searchInput?.value.trim();
-  if (!query) return;
-
-  console.log("Search query:", query);
-
-  closeSearch();
-});
-
-searchForm?.addEventListener("click", (e) => {
-  e.stopPropagation();
-});
-
-document.addEventListener("click", (e) => {
-  const isOpen = siteHeader?.classList.contains("search-open");
-  if (!isOpen) return;
-
-  const clickedInsideForm = searchForm?.contains(e.target);
-  const clickedToggle = searchToggle?.contains(e.target);
-
-  if (!clickedInsideForm && !clickedToggle) {
-    closeSearch();
-  }
-});
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") {
-    closeSearch();
-  }
-});
-
 async function fetchHeroMovie(language = "en-US", page = 1) {
   try {
-    const url = `${TMDB_BASE_URL}/now_playing?language=${language}&page=${page}`;
+    const url = `${TMDB_BASE_URL}/movie/now_playing?language=${language}&page=${page}`;
     const res = await fetch(url, options);
+    
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
@@ -169,7 +152,7 @@ function updateHeroImage() {
 
 async function fetchMovies(language = "en-US", page = 1, shouldScroll = true) {
   try {
-    const url = `${TMDB_BASE_URL}/popular?language=${language}&page=${page}`;
+    const url = `${TMDB_BASE_URL}/movie/popular?language=${language}&page=${page}`;
     const res = await fetch(url, options);
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
@@ -206,18 +189,8 @@ async function fetchMovies(language = "en-US", page = 1, shouldScroll = true) {
   }
 }
 
-const STORAGE_KEY = "cinelog_favourites";
-
-function getFavorites() {
-  return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-}
-
-function saveFavorites(favorites) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
-}
-
 function toggleFavorite(movie, button) {
-  const favorites = getFavorites();
+  const favorites = getFavourites();
   const existingIndex = favorites.findIndex((fav) => fav.id === movie.id);
 
   if (existingIndex > -1) {
@@ -237,7 +210,7 @@ function toggleFavorite(movie, button) {
     button.setAttribute("aria-label", "Remove from favorites");
   }
 
-  saveFavorites(favorites);
+  saveFavourites(favorites);
 }
 
 async function renderMovie(movie) {
@@ -273,7 +246,8 @@ async function renderMovie(movie) {
   favoriteBtn.innerHTML = '<i class="fa-solid fa-bookmark text-sm"></i>';
   favoriteBtn.dataset.movieId = movie.id;
 
-  const favorites = getFavorites();
+  const favorites = getFavourites();
+  
   if (favorites.some((fav) => fav.id === movie.id)) {
     favoriteBtn.classList.add("favorited");
   }
@@ -370,6 +344,139 @@ nextBtn?.addEventListener("click", () => {
     fetchMovies(language, currentPage, true); // Scroll when using pagination
   }
 });
+
+/* SEARCH */
+const searchDialog = document.getElementById("search-dialog");
+const searchInput = document.getElementById("search-input");
+const searchInitial = document.getElementById("search-initial");
+const searchLoading = document.getElementById("search-loading");
+const searchEmpty = document.getElementById("search-empty");
+const searchResultsList = document.getElementById("search-results-list");
+const queryDisplay = document.getElementById("search-query-display");
+
+function openSearch() {
+  searchDialog.classList.remove("hidden");
+  searchInput?.focus();
+  document.body.style.overflow = "hidden";
+}
+
+function closeSearch() {
+  searchDialog.classList.add("hidden");
+  document.body.style.overflow = "";
+  resetSearchUI();
+}
+
+function resetSearchUI() {
+  searchInput.value = "";
+  searchInitial.classList.remove("hidden");
+  searchLoading.classList.add("hidden");
+  searchEmpty.classList.add("hidden");
+  searchResultsList.classList.add("hidden");
+  searchResultsList.innerHTML = "";
+}
+
+function showSearchState(state) {
+  searchInitial.classList.add("hidden");
+  searchLoading.classList.add("hidden");
+  searchEmpty.classList.add("hidden");
+  searchResultsList.classList.add("hidden");
+
+  if (state === "loading") searchLoading.classList.remove("hidden");
+  if (state === "empty") searchEmpty.classList.remove("hidden");
+  if (state === "results") searchResultsList.classList.remove("hidden");
+  if (state === "initial") searchInitial.classList.remove("hidden");
+}
+
+function searchResultHTML(movie) {
+  const poster = `${TMDB_IMAGE_BASE_URL}/w92${movie.poster_path}`;
+  const isFav = isFavourite(movie.id);
+
+  return `
+    <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-bg-raised
+                transition-colors duration-150 group" data-id="${movie.id}">
+      <img src="${poster}" alt="${movie.title}"
+           class="w-12 h-16 object-cover rounded-lg shrink-0" />
+      <div class="flex-1 min-w-0">
+        <p class="text-text-primary font-semibold text-sm truncate">${movie.title}</p>
+        <div class="flex items-center gap-2 mt-0.5">
+          ${ratingBadge(movie.vote_average)}
+          <span class="text-muted text-xs">${movie.year}</span>
+        </div>
+      </div>
+      <button class="search-fav-btn btn-outline text-xs px-3 py-1.5 shrink-0
+                     ${isFav ? "border-accent text-accent" : ""}"
+              data-id="${movie.id}">
+        <i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i>
+        ${isFav ? "Saved" : "Save"}
+      </button>
+    </div>
+  `;
+}
+
+let searchTimeout;
+async function handleSearchInput(e) {
+  const query = e.target.value.trim();
+  if (!query) {
+    showSearchState("initial");
+    return;
+  }
+
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    showSearchState("loading");
+    try {
+      const res = await fetch(
+        `${TMDB_BASE_URL}/search/movie?&query=${encodeURIComponent(query)}&language=en-US`,
+        options,
+      );
+      const data = await res.json();
+      const results = data.results || [];
+
+      if (results.length === 0) {
+        queryDisplay.textContent = `"${query}"`;
+        showSearchState("empty");
+        return;
+      }
+
+      searchResultsList.innerHTML = results
+        .slice(0, 8)
+        .map(searchResultHTML)
+        .join("");
+      showSearchState("results");
+
+      searchResultsList.querySelectorAll(".search-fav-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = Number(btn.dataset.id);
+          const movie = results.find((m) => m.id === id);
+          if (!movie) return;
+          toggleFavourite(movie);
+          const isFav = isFavourite(id);
+          btn.innerHTML = `<i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i> ${isFav ? "Saved" : "Save"}`;
+          btn.classList.toggle("border-accent", isFav);
+          btn.classList.toggle("text-accent", isFav);
+        });
+      });
+    } catch (err) {
+      console.error("search error:", err);
+      queryDisplay.textContent = `"${query}"`;
+      showSearchState("empty");
+    }
+  }, 400);
+}
+
+const openBtns = [
+  document.getElementById("open-search"),
+  document.getElementById("open-search-mobile"),
+];
+openBtns.forEach((btn) => btn?.addEventListener("click", openSearch));
+
+document.getElementById("close-search")?.addEventListener("click", closeSearch);
+
+searchDialog?.addEventListener("click", (e) => {
+  if (e.target === searchDialog) closeSearch();
+});
+
+searchInput?.addEventListener("input", handleSearchInput);
 
 fetchMovies(language, currentPage, false); // Don't scroll on initial load
 fetchHeroMovie();

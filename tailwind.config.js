@@ -31,6 +31,7 @@ tailwind.config = {
         "bg-card": "#16141f", // movie cards
         "bg-textarea": "#1c1a28", 
         "bg-border": "#2e2b44", // dividers, borders
+        "bg-search": "#1c1a28", 
 
         // Surfaces
         surface: "#16141f", // cards, dialogs
