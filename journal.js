@@ -1,4 +1,8 @@
 import { TMDB_BASE_URL, TMDB_IMAGE_BASE_URL, options } from "./config.js";
+const mobMenuBtn = document.querySelector("#mob-menu-btn");
+const mobNav = document.querySelector("#mob-nav");
+const mobMenuOverlay = document.querySelector("#mob-menu-overlay");
+const mobNavLinks = mobNav?.querySelectorAll("a");
 /* STORAGE */
 const STORAGE_KEY = "cinelog_favourites";
 
@@ -9,6 +13,205 @@ function getFavourites() {
 function saveFavourites(favs) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(favs));
 }
+
+function isFavourite(movieId) {
+  return getFavourites().some((m) => m.id === movieId);
+}
+
+function toggleFavourite(movie) {
+  let favs = getFavourites();
+  if (isFavourite(movie.id)) {
+    favs = favs.filter((m) => m.id !== movie.id);
+  } else {
+    favs.unshift({ ...movie, note: "" });
+  }
+  saveFavourites(favs);
+  updateFavBadge();
+}
+function updateFavBadge() {
+  const count = getFavourites().length;
+  const badge = document.getElementById("fav-count-badge");
+  if (!badge) return;
+  if (count > 0) {
+    badge.textContent = count;
+    badge.classList.remove("hidden");
+    badge.classList.add("flex");
+  } else {
+    badge.classList.add("hidden");
+    badge.classList.remove("flex");
+  }
+}
+
+/* SEARCH */
+const searchDialog = document.getElementById("search-dialog");
+const searchInput = document.getElementById("search-input");
+const searchInitial = document.getElementById("search-initial");
+const searchLoading = document.getElementById("search-loading");
+const searchEmpty = document.getElementById("search-empty");
+const searchResultsList = document.getElementById("search-results-list");
+const queryDisplay = document.getElementById("search-query-display");
+
+function openSearch() {
+  searchDialog.classList.remove("hidden");
+  searchInput?.focus();
+  document.body.style.overflow = "hidden";
+}
+
+function closeSearch() {
+  searchDialog.classList.add("hidden");
+  document.body.style.overflow = "";
+  resetSearchUI();
+}
+
+function resetSearchUI() {
+  searchInput.value = "";
+  searchInitial.classList.remove("hidden");
+  searchLoading.classList.add("hidden");
+  searchEmpty.classList.add("hidden");
+  searchResultsList.classList.add("hidden");
+  searchResultsList.innerHTML = "";
+}
+
+function showSearchState(state) {
+  searchInitial.classList.add("hidden");
+  searchLoading.classList.add("hidden");
+  searchEmpty.classList.add("hidden");
+  searchResultsList.classList.add("hidden");
+
+  if (state === "loading") searchLoading.classList.remove("hidden");
+  if (state === "empty") searchEmpty.classList.remove("hidden");
+  if (state === "results") searchResultsList.classList.remove("hidden");
+  if (state === "initial") searchInitial.classList.remove("hidden");
+}
+
+function searchResultHTML(movie) {
+  const poster = `${TMDB_IMAGE_BASE_URL}/w92${movie.poster_path}`;
+  const isFav = isFavourite(movie.id);
+
+  return `
+    <div class="flex items-center gap-4 p-3 rounded-xl hover:bg-bg-raised
+                transition-colors duration-150 group" data-id="${movie.id}">
+      <img src="${poster}" alt="${movie.title}"
+           class="w-12 h-16 object-cover rounded-lg shrink-0" />
+      <div class="flex-1 min-w-0">
+        <p class="text-text-primary font-semibold text-sm truncate">${movie.title}</p>
+        <div class="flex items-center gap-2 mt-0.5">
+          ${ratingBadge(movie.vote_average)}
+          <span class="text-muted text-xs">${movie.year}</span>
+        </div>
+      </div>
+      <button class="search-fav-btn btn-outline text-xs px-3 py-1.5 shrink-0
+                     ${isFav ? "border-accent text-accent" : ""}"
+              data-id="${movie.id}">
+        <i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i>
+        ${isFav ? "Saved" : "Save"}
+      </button>
+    </div>
+  `;
+}
+
+let searchTimeout;
+async function handleSearchInput(e) {
+  const query = e.target.value.trim();
+  if (!query) {
+    showSearchState("initial");
+    return;
+  }
+
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    showSearchState("loading");
+    try {
+      const res = await fetch(
+        `${TMDB_BASE_URL}/search/movie?&query=${encodeURIComponent(query)}&language=en-US`,
+        options,
+      );
+      const data = await res.json();
+      const results = data.results || [];
+
+      if (results.length === 0) {
+        queryDisplay.textContent = `"${query}"`;
+        showSearchState("empty");
+        return;
+      }
+
+      searchResultsList.innerHTML = results
+        .slice(0, 8)
+        .map(searchResultHTML)
+        .join("");
+      showSearchState("results");
+
+      searchResultsList.querySelectorAll(".search-fav-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const id = Number(btn.dataset.id);
+          const movie = results.find((m) => m.id === id);
+          if (!movie) return;
+          toggleFavourite(movie);
+          renderJournal();
+          const isFav = isFavourite(id);
+          btn.innerHTML = `<i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i> ${isFav ? "Saved" : "Save"}`;
+          btn.classList.toggle("border-accent", isFav);
+          btn.classList.toggle("text-accent", isFav);
+        });
+      });
+    } catch (err) {
+      console.error("search error:", err);
+      queryDisplay.textContent = `"${query}"`;
+      showSearchState("empty");
+    }
+  }, 400);
+}
+
+const openBtns = [
+  document.getElementById("open-search"),
+  document.getElementById("open-search-mobile"),
+];
+
+openBtns.forEach((btn) => btn?.addEventListener("click", openSearch));
+
+document.getElementById("close-search")?.addEventListener("click", closeSearch);
+
+searchDialog?.addEventListener("click", (e) => {
+  if (e.target === searchDialog) closeSearch();
+});
+
+searchInput?.addEventListener("input", handleSearchInput);
+
+/* MOB MENU  */
+function openMobileMenu() {
+  mobMenuBtn?.classList.add("active");
+  mobNav?.classList.add("active");
+  mobMenuOverlay?.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeMobileMenu() {
+  mobMenuBtn?.classList.remove("active");
+  mobNav?.classList.remove("active");
+  mobMenuOverlay?.classList.remove("active");
+  document.body.style.overflow = "auto";
+}
+
+mobMenuBtn?.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (mobMenuBtn?.classList.contains("active")) {
+    closeMobileMenu();
+  } else {
+    openMobileMenu();
+  }
+});
+
+mobMenuOverlay?.addEventListener("click", closeMobileMenu);
+
+mobNavLinks?.forEach((link) => {
+  link.addEventListener("click", closeMobileMenu);
+});
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") {
+    closeMobileMenu();
+  }
+});
 
 /* RATING BADGE  */
 
@@ -22,11 +225,7 @@ function ratingBadge(rating) {
 
 /* JOURNAL CARD */
 
-const IMG_BASE = "https://image.tmdb.org/t/p";
-
 function journalCardHTML(movie) {
-  console.log('movie', movie);
-  
   return `
     <div class="journal-card animate-fade-up" data-id="${movie.id}">
 
@@ -152,6 +351,4 @@ function renderJournal() {
 
 /* INIT  */
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderJournal();
-});
+document.addEventListener("DOMContentLoaded", renderJournal);

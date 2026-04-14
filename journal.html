@@ -43,6 +43,10 @@
               transparent 28%
             );
         }
+
+        ::-webkit-scrollbar        { width: 5px; }
+        ::-webkit-scrollbar-track  { @apply bg-bg-base; }
+        ::-webkit-scrollbar-thumb  { @apply bg-bg-border rounded-full; }
       }
 
       @layer components {
@@ -83,49 +87,6 @@
 
         .glass-panel {
           @apply bg-bg-card/70 backdrop-blur-md border border-bg-border;
-        }
-
-        /* Search */
-        .search-wrap {
-          @apply shrink-0;
-        }
-
-        .search-form {
-          @apply absolute top-0 bottom-0 left-8 right-8 w-auto h-10 opacity-0 my-auto pointer-events-none transition-all duration-300 rounded-2xl;
-        }
-
-        .search-form:hover .search-input,
-        .search-form:focus-within .search-input {
-          @apply border-accent shadow-gold;
-        }
-
-        .search-form:hover .search-submit,
-        .search-form:hover .search-close-btn {
-          @apply text-accent;
-        }
-
-        .search-input {
-          @apply h-full w-full rounded-2xl border border-bg-border bg-bg-card/95 text-text-primary placeholder-muted pl-12 pr-12 outline-none transition duration-300;
-        }
-
-        #site-header.search-open .search-form {
-          @apply opacity-100 pointer-events-auto;
-        }
-
-        #site-header.search-open .site-logo {
-          @apply opacity-0 -translate-x-4 pointer-events-none;
-        }
-
-        #site-header.search-open #search-toggle {
-          @apply opacity-0 pointer-events-none scale-95;
-        }
-
-        #site-header.search-open .desktop-nav {
-          @apply opacity-0 pointer-events-none;
-        }
-
-        #site-header.search-open .mobile-actions {
-          @apply opacity-0 pointer-events-none;
         }
 
         /* Mobile nav */
@@ -206,6 +167,17 @@
                  focus:outline-none focus:border-accent
                  resize-none transition-colors duration-200;
         }
+
+        /* ── Search dialog ── */
+        .dialog-backdrop {
+          @apply fixed inset-0 bg-black/80 backdrop-blur-sm z-50
+                 flex items-start justify-center pt-20 px-5;
+        }
+        .dialog-box {
+          @apply bg-bg-search rounded-2xl w-full max-w-2xl
+                 border border-bg-border shadow-card
+                 overflow-hidden;
+        }
       }
     </style>
   </head>
@@ -232,49 +204,21 @@
           </span>
         </a>
 
-        <!-- Search -->
-        <div class="search-wrap">
-          <button
-            id="search-toggle"
-            type="button"
-            aria-label="Open search"
-            class="mobile-icon-btn"
-          >
-            <i class="fa-solid fa-magnifying-glass"></i>
-          </button>
-
-          <form id="search-form" class="search-form" role="search">
-            <button
-              type="submit"
-              aria-label="Submit search"
-              class="search-submit absolute left-4 top-1/2 -translate-y-1/2 text-muted hover:text-accent transition"
-            >
-              <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
-
-            <input
-              id="search-input"
-              type="text"
-              placeholder="Search movies"
-              class="search-input"
-            />
-
-            <button
-              id="search-close"
-              type="button"
-              aria-label="Close search"
-              class="search-close-btn absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-text-primary transition"
-            >
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </form>
-        </div>
 
         <!-- Desktop nav -->
         <nav
           class="desktop-nav hidden md:flex items-center gap-8 text-lg font-bold text-text-body transition duration-300"
         >
-          <a href="./index.html" class="text-text-primary">Discover</a>
+          <button id="open-search"
+                  class="btn-outline text-sm gap-2 hidden md:inline-flex">
+            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            Search movies
+          </button>
+          <button id="open-search"
+                  class="md:hidden btn-ghost p-2.5 rounded-xl">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+          <a href="./index.html" class="hover:text-text-primary">Discover</a>
           <a href="./journal.html" class="hover:text-text-primary transition">
             My Journal
           </a>
@@ -284,6 +228,10 @@
         <div
           class="mobile-actions md:hidden flex items-center gap-3 ml-auto transition duration-300"
         >
+          <button id="open-search-mobile"
+                  class="md:hidden btn-ghost p-2.5 rounded-xl">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
           <button
             id="mob-menu-btn"
             type="button"
@@ -320,7 +268,7 @@
         <div class="flex-1 flex flex-col py-6">
           <a
             href="./index.html"
-            class="px-6 py-4 text-lg font-semibold text-text-primary hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent"
+            class="px-6 py-4 text-lg font-semibold text-text-body hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent"
           >
             <i class="fa-solid fa-compass mr-3"></i>Discover
           </a>
@@ -408,6 +356,43 @@
       </section>
       <!-- END JOURNAL ENTRIES LIST -->
     </main>
+
+    
+    <!-- search modal -->
+    <div id="search-dialog" class="dialog-backdrop hidden" role="dialog" aria-modal="true">
+      <div class="dialog-box animate-fade-up">
+        <div class="flex items-center gap-3 p-4 border-b border-bg-border">
+          <i class="fa-solid fa-magnifying-glass text-accent"></i>
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Search for a movie..."
+            class="flex-1 bg-transparent outline-none text-text-primary placeholder-muted text-base font-medium"
+            autofocus
+          />
+          <button id="close-search" class="btn-ghost p-2 rounded-lg text-sm">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div id="search-results" class="max-h-[60vh] overflow-y-auto p-4">
+          <div id="search-initial" class="text-center py-10">
+            <i class="fa-solid fa-film text-3xl text-muted mb-3 block"></i>
+            <p class="text-muted text-sm">Type to search for movies…</p>
+          </div>
+          <div id="search-loading" class="hidden text-center py-10">
+            <i class="fa-solid fa-spinner fa-spin text-accent text-2xl mb-3 block"></i>
+            <p class="text-muted text-sm">Searching…</p>
+          </div>
+          <div id="search-empty" class="hidden text-center py-10">
+            <i class="fa-solid fa-face-meh text-3xl text-muted mb-3 block"></i>
+            <p class="text-text-body">No results for <strong id="search-query-display" class="text-accent"></strong></p>
+            <p class="text-muted text-sm mt-1">Try a different title or keyword.</p>
+          </div>
+          <div id="search-results-list" class="hidden flex flex-col gap-3"></div>
+        </div>
+      </div>
+    </div>
 
     <footer class="border-t border-bg-border/70 py-8">
       <div
