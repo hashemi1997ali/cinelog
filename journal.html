@@ -28,6 +28,25 @@
         html {
           scroll-behavior: smooth;
         }
+
+        body {
+          @apply bg-bg-base text-text-body;
+          background-image:
+            radial-gradient(
+              circle at top right,
+              rgba(245, 158, 11, 0.08),
+              transparent 22%
+            ),
+            radial-gradient(
+              circle at left center,
+              rgba(46, 43, 68, 0.18),
+              transparent 28%
+            );
+        }
+
+        ::-webkit-scrollbar        { width: 5px; }
+        ::-webkit-scrollbar-track  { @apply bg-bg-base; }
+        ::-webkit-scrollbar-thumb  { @apply bg-bg-border rounded-full; }
       }
 
       @layer components {
@@ -38,30 +57,357 @@
 
         /*  Section heading  */
         .section-title {
+          @apply font-headings text-4xl md:text-5xl text-text-primary tracking-wide;
         }
         .section-label {
+          @apply text-accent text-xs font-semibold uppercase tracking-[0.2em] mb-2;
         }
 
         /*  Buttons  */
         .btn {
+          @apply inline-flex items-center justify-center gap-3 rounded-2xl px-6 py-3.5 font-body font-bold text-base transition duration-300 border;
         }
+
         .btn-gold {
+          @apply btn bg-accent text-bg-base border-accent shadow-gold hover:bg-accent-dark hover:border-accent-dark hover:-translate-y-0.5;
         }
+
+        .btn-danger {
+          @apply btn border border-red-500/30 text-red-400
+                 hover:bg-red-500/10 hover:border-red-500;
+        }
+
         .btn-outline {
+          @apply btn bg-bg-textarea/40 text-text-primary border-bg-border hover:bg-bg-textarea hover:border-accent/40 hover:-translate-y-0.5;
         }
+
         .btn-ghost {
+          @apply btn bg-bg-card/60 text-text-body border-bg-border hover:text-text-primary hover:bg-bg-textarea;
+        }
+
+        .glass-panel {
+          @apply bg-bg-card/70 backdrop-blur-md border border-bg-border;
+        }
+
+        /* Mobile nav */
+        .mob-menu-overlay {
+          @apply fixed inset-0 bg-black/70 backdrop-blur-sm opacity-0 invisible transition-opacity duration-300 z-40;
+        }
+
+        .mob-menu-overlay.active {
+          @apply opacity-100 visible;
+        }
+
+        .mob-nav {
+          @apply fixed top-0 right-0 h-screen w-72 bg-gradient-to-b from-bg-base to-bg-card overflow-y-auto shadow-2xl transform translate-x-full transition-transform duration-300 z-50;
+          border-left: 2px solid theme("colors.accent");
+        }
+
+        .input-dark {
+          @apply w-full rounded-2xl border border-bg-border bg-bg-card/70 text-text-primary placeholder-muted px-5 py-4 outline-none transition focus:border-accent focus:shadow-gold-sm;
+        }
+
+        .mobile-icon-btn {
+          @apply grid h-10 w-10 place-items-center rounded-2xl text-text-primary transition duration-300;
+        }
+
+        .site-logo {
+          @apply flex flex-1 items-center gap-3 shrink-0 transition-all duration-300;
+        }
+
+        .mob-nav.active {
+          @apply translate-x-0;
+        }
+
+        .btn-hamburger.active .hamburger-line:nth-child(1) {
+          @apply rotate-45 translate-y-[10px];
+        }
+
+        .btn-hamburger.active .hamburger-line:nth-child(2) {
+          @apply opacity-0;
+        }
+
+        .btn-hamburger.active .hamburger-line:nth-child(3) {
+          @apply -rotate-45 -translate-y-[10px];
+        }
+
+        /*  Rating badge  */
+        .rating-badge {
+          @apply inline-flex items-center gap-1
+                 text-xs font-bold px-2 py-1 rounded-lg;
+        }
+        .rating-high {
+          @apply rating-badge bg-green-500/20 text-green-400;
+        }
+        .rating-mid {
+          @apply rating-badge bg-gold-500/20 text-gold-400;
+        }
+        .rating-low {
+          @apply rating-badge bg-red-500/20 text-red-400;
+        }
+
+        /* Journal card  */
+        .journal-card {
+          @apply flex flex-col sm:flex-row gap-5
+                 bg-bg-card rounded-2xl overflow-hidden
+                 border border-bg-border/50
+                 transition-all duration-300
+                 hover:border-accent/30 hover:shadow-card;
+        }
+        .journal-poster {
+          @apply w-full sm:w-36 shrink-0 aspect-[2/3] sm:aspect-auto
+                 object-cover;
+        }
+
+        /* Notes textarea */
+        .note-textarea {
+          @apply w-full bg-bg-textarea rounded-xl px-4 py-3 text-sm
+                 text-text-primary placeholder-muted
+                 border border-bg-border
+                 focus:outline-none focus:border-accent
+                 resize-none transition-colors duration-200;
+        }
+
+        /* ── Search dialog ── */
+        .dialog-backdrop {
+          @apply fixed inset-0 bg-black/80 backdrop-blur-sm z-50
+                 flex items-start justify-center pt-20 px-5;
+        }
+        .dialog-box {
+          @apply bg-bg-search rounded-2xl w-full max-w-2xl
+                 border border-bg-border shadow-card
+                 overflow-hidden;
         }
       }
     </style>
   </head>
 
-  <body class="font-sans bg-bg-base text-text-body antialiased">
-    <header></header>
+  <body>
+    <header
+      id="site-header"
+      class="sticky top-0 z-50 border-b border-bg-border/70 bg-bg-base/80 backdrop-blur-lg"
+    >
+      <div
+        class="relative container flex items-center justify-between gap-4 py-4"
+      >
+        <!-- Logo -->
+        <a href="./index.html" id="site-logo" class="site-logo">
+          <span
+            class="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-bg-base shadow-gold"
+          >
+            <i class="fa-solid fa-film text-lg"></i>
+          </span>
+          <span
+            class="font-headings text-4xl uppercase tracking-wide text-text-primary"
+          >
+            Cine<span class="text-text-gold">Log</span>
+          </span>
+        </a>
 
-    <main></main>
 
-    <footer></footer>
+        <!-- Desktop nav -->
+        <nav
+          class="desktop-nav hidden md:flex items-center gap-8 text-lg font-bold text-text-body transition duration-300"
+        >
+          <button id="open-search"
+                  class="btn-outline text-sm gap-2 hidden md:inline-flex">
+            <i class="fa-solid fa-magnifying-glass text-xs"></i>
+            Search movies
+          </button>
+          <button id="open-search"
+                  class="md:hidden btn-ghost p-2.5 rounded-xl">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+          <a href="./index.html" class="hover:text-text-primary">Discover</a>
+          <a href="./journal.html" class="hover:text-text-primary transition">
+            My Journal
+          </a>
+        </nav>
 
-    <script src="./journal.js"></script>
+        <!-- Mobile actions -->
+        <div
+          class="mobile-actions md:hidden flex items-center gap-3 ml-auto transition duration-300"
+        >
+          <button id="open-search-mobile"
+                  class="md:hidden btn-ghost p-2.5 rounded-xl">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+          <button
+            id="mob-menu-btn"
+            type="button"
+            class="btn-hamburger w-10 h-10 flex flex-col items-center justify-center gap-1.5 p-0 hover:text-accent transition-colors"
+            aria-label="Open menu"
+          >
+            <span
+              class="hamburger-line w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
+            ></span>
+            <span
+              class="hamburger-line w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
+            ></span>
+            <span
+              class="hamburger-line w-5 h-0.5 bg-text-primary rounded-full block transition-all duration-300"
+            ></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mob-menu-overlay" class="mob-menu-overlay"></div>
+
+    <!-- Mobile Navigation Menu -->
+    <nav id="mob-nav" class="mob-nav">
+      <div class="flex flex-col h-full">
+        <div class="px-6 py-8 border-b border-bg-border/50">
+          <h2
+            class="font-headings text-2xl uppercase tracking-wide text-text-primary"
+          >
+            Menu
+          </h2>
+        </div>
+        <div class="flex-1 flex flex-col py-6">
+          <a
+            href="./index.html"
+            class="px-6 py-4 text-lg font-semibold text-text-body hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent"
+          >
+            <i class="fa-solid fa-compass mr-3"></i>Discover
+          </a>
+          <a
+            href="./journal.html"
+            class="px-6 py-4 text-lg font-semibold text-text-body hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent"
+          >
+            <i class="fa-solid fa-book mr-3"></i>My Journal
+          </a>
+        </div>
+        <div class="px-6 py-6 border-t border-bg-border/50 text-xs text-muted">
+          <p>© 2026 CineLog</p>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-1">
+      <!-- JOURNAL HERO -->
+      <section class="py-14 border-b border-bg-border/50">
+        <div
+          class="container flex flex-col md:flex-row md:items-end justify-between gap-6"
+        >
+          <div class="animate-fade-up">
+            <p class="section-label">Personal collection</p>
+            <h1
+              class="font-headings text-6xl md:text-7xl text-text-primary tracking-wide leading-none mb-3"
+            >
+              My <span class="text-accent">Journal</span>
+            </h1>
+            <p class="text-text-body max-w-md">
+              Your saved films and personal notes — all in one place.
+            </p>
+          </div>
+
+          <div id="journal-stats" class="flex gap-6 animate-fade-up">
+            <div class="text-center">
+              <p
+                id="stat-count"
+                class="font-headings text-4xl text-accent mb-0.5"
+              >
+                0
+              </p>
+              <p class="text-muted text-xs">Films saved</p>
+            </div>
+            <div class="text-center">
+              <p
+                id="stat-notes"
+                class="font-headings text-4xl text-text-primary mb-0.5"
+              >
+                0
+              </p>
+              <p class="text-muted text-xs">With notes</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- END JOURNAL HERO -->
+
+      <!-- JOURNAL ENTRIES LIST -->
+      <section class="py-12">
+        <div class="container">
+          <!-- Empty state -->
+          <div id="journal-empty" class="hidden text-center py-24">
+            <i
+              class="fa-solid fa-bookmark text-5xl text-bg-border mb-5 block"
+            ></i>
+            <h2
+              class="font-headings text-4xl text-text-primary tracking-wide mb-2"
+            >
+              Nothing saved yet
+            </h2>
+            <p class="text-text-body mb-6 max-w-sm mx-auto">
+              Go to Discover and add films to your journal using the
+              <i class="fa-solid fa-bookmark text-accent mx-1"></i> button.
+            </p>
+            <a href="index.html" class="btn-gold text-base px-7 py-3">
+              <i class="fa-solid fa-film"></i>
+              Browse Movies
+            </a>
+          </div>
+
+          <!-- Journal entries -->
+          <div id="journal-list" class="flex flex-col gap-5"></div>
+        </div>
+      </section>
+      <!-- END JOURNAL ENTRIES LIST -->
+    </main>
+
+    
+    <!-- search modal -->
+    <div id="search-dialog" class="dialog-backdrop hidden" role="dialog" aria-modal="true">
+      <div class="dialog-box animate-fade-up">
+        <div class="flex items-center gap-3 p-4 border-b border-bg-border">
+          <i class="fa-solid fa-magnifying-glass text-accent"></i>
+          <input
+            id="search-input"
+            type="text"
+            placeholder="Search for a movie..."
+            class="flex-1 bg-transparent outline-none text-text-primary placeholder-muted text-base font-medium"
+            autofocus
+          />
+          <button id="close-search" class="btn-ghost p-2 rounded-lg text-sm">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div id="search-results" class="max-h-[60vh] overflow-y-auto p-4">
+          <div id="search-initial" class="text-center py-10">
+            <i class="fa-solid fa-film text-3xl text-muted mb-3 block"></i>
+            <p class="text-muted text-sm">Type to search for movies…</p>
+          </div>
+          <div id="search-loading" class="hidden text-center py-10">
+            <i class="fa-solid fa-spinner fa-spin text-accent text-2xl mb-3 block"></i>
+            <p class="text-muted text-sm">Searching…</p>
+          </div>
+          <div id="search-empty" class="hidden text-center py-10">
+            <i class="fa-solid fa-face-meh text-3xl text-muted mb-3 block"></i>
+            <p class="text-text-body">No results for <strong id="search-query-display" class="text-accent"></strong></p>
+            <p class="text-muted text-sm mt-1">Try a different title or keyword.</p>
+          </div>
+          <div id="search-results-list" class="hidden flex flex-col gap-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="border-t border-bg-border/70 py-8">
+      <div
+        class="container flex flex-col gap-3 md:flex-row md:items-center md:justify-between"
+      >
+        <p class="text-sm text-muted">
+          © 2026 CineLog. Personal movie journal project.
+        </p>
+        <p class="text-sm text-muted">
+          This product uses the TMDB API but is not endorsed or certified by
+          TMDB.
+        </p>
+      </div>
+    </footer>
+
+    <script type="module" src="./journal.js"></script>
   </body>
 </html>
