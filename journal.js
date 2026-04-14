@@ -109,7 +109,7 @@ function searchResultHTML(movie) {
                 transition-colors duration-150 group" data-id="${movie.id}">
       <img src="${poster}" alt="${movie.title}"
            class="w-12 h-16 object-cover rounded-lg shrink-0" />
-      <div class="flex-1 min-w-0">
+      <div class="flex-1 min-w-0 gap-2 flex flex-col">
         <p class="text-text-primary font-semibold text-sm truncate">${movie.title}</p>
         <div class="flex items-center gap-2 mt-0.5">
           <span class="text-left w-fit text-xs font-bold rounded-xl px-2 py-1 ${style.join(" ")}">★ ${movie.vote_average.toFixed(1)}</span>
@@ -272,7 +272,7 @@ function journalCardHTML(movie) {
           ${movie.overview || "No description available."}
         </p>
 
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-4">
           <label class="text-accent text-xs font-semibold uppercase tracking-widest">
             <i class="fa-solid fa-pen text-[10px] mr-1"></i>
             My Notes
