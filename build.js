@@ -20,26 +20,14 @@ loadDotEnv(path.resolve(__dirname, ".env"));
 
 const token = process.env.TMDB_API_TOKEN;
 if (!token) {
-  console.error(
-    "TMDB_API_TOKEN environment variable is not set. Add it to .env or set the env var.",
-  );
+  console.error("TMDB_API_TOKEN not found in .env or env vars");
   process.exit(1);
 }
 
 const configPath = path.resolve(__dirname, "config.js");
 let configContent = fs.readFileSync(configPath, "utf8");
 
-if (!configContent.includes("{{TMDB_API_TOKEN}}")) {
-  console.error(
-    "config.js does not contain the placeholder {{TMDB_API_TOKEN}}.",
-  );
-  process.exit(1);
-}
-
-configContent = configContent.replace(
-  'const API_TOKEN = "{{TMDB_API_TOKEN}}";',
-  `const API_TOKEN = atob("${Buffer.from(token).toString("base64")}");`,
-);
+configContent = configContent.replace("{{TMDB_API_TOKEN}}", token);
 
 fs.writeFileSync(configPath, configContent, "utf8");
-console.log("Build complete: updated config.js");
+console.log("Config updated with token from env");

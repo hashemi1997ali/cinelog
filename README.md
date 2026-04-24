@@ -44,7 +44,7 @@ The project uses GitHub Actions to automatically build and deploy to GitHub Page
 
 - Local tokens are loaded from `.env`
 - Production tokens use GitHub repository secrets (`TMDB_API_TOKEN`)
-- The build modifies `config.js` with the token (obfuscated with base64)
+- The build uses dotenv to load the token and modifies `config.js`
 
 ## Technologies
 
