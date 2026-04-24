@@ -1,32 +1,45 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-// Ensure dist directory exists
-if (!fs.existsSync('dist')) {
-  fs.mkdirSync('dist');
+function loadDotEnv(filePath) {
+  if (!fs.existsSync(filePath)) return;
+  const contents = fs.readFileSync(filePath, "utf8");
+  for (const line of contents.split(/\r?\n/)) {
+    const trimmed = line.trim();
+    if (!trimmed || trimmed.startsWith("#")) continue;
+    const [key, ...rest] = trimmed.split("=");
+    if (!key) continue;
+    const value = rest.join("=").trim();
+    if (!(key in process.env)) {
+      process.env[key] = value;
+    }
+  }
 }
 
-// Read config.js
-let configContent = fs.readFileSync('config.js', 'utf8');
+loadDotEnv(path.resolve(__dirname, ".env"));
 
-// Replace placeholder with env var
 const token = process.env.TMDB_API_TOKEN;
 if (!token) {
-  console.error('TMDB_API_TOKEN environment variable is not set');
+  console.error(
+    "TMDB_API_TOKEN environment variable is not set. Add it to .env or set the env var.",
+  );
   process.exit(1);
 }
-configContent = configContent.replace('{{TMDB_API_TOKEN}}', token);
 
-// Write to dist/config.js
-fs.writeFileSync('dist/config.js', configContent);
+const configPath = path.resolve(__dirname, "config.js");
+let configContent = fs.readFileSync(configPath, "utf8");
 
-// Copy other files
-const filesToCopy = ['index.html', 'journal.html', 'journal.js', 'main.js', 'tailwind.config.js'];
+if (!configContent.includes("{{TMDB_API_TOKEN}}")) {
+  console.error(
+    "config.js does not contain the placeholder {{TMDB_API_TOKEN}}.",
+  );
+  process.exit(1);
+}
 
-filesToCopy.forEach(file => {
-  if (fs.existsSync(file)) {
-    fs.copyFileSync(file, path.join('dist', file));
-  }
-});
+configContent = configContent.replace(
+  'const API_TOKEN = "{{TMDB_API_TOKEN}}";',
+  `const API_TOKEN = atob("${Buffer.from(token).toString("base64")}");`,
+);
 
-console.log('Build complete');
+fs.writeFileSync(configPath, configContent, "utf8");
+console.log("Build complete: updated config.js");
