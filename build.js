@@ -27,7 +27,7 @@ if (!token) {
 const configPath = path.resolve(__dirname, "config.js");
 let configContent = fs.readFileSync(configPath, "utf8");
 
-configContent = configContent.replace("{{TMDB_API_TOKEN}}", `atob("${Buffer.from(token).toString("base64")}")`);
+configContent = configContent.replace("{{TMDB_API_TOKEN}}", token);
 
 fs.writeFileSync(configPath, configContent, "utf8");
 console.log("Config updated with token from env");

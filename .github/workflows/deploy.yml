@@ -22,14 +22,8 @@ jobs:
         with:
           node-version: "18"
 
-      - name: Build
-        run: node build.js
-        env:
-          TMDB_API_TOKEN: ${{ secrets.TMDB_API_TOKEN }}
-
-      - name: Commit generated config file if changed
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add config.js
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Build: update config.js" && git push)
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./

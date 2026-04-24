@@ -40,11 +40,12 @@ Browse trending movies, search titles instantly, save favourites, and keep perso
 
 ## Deployment
 
-The project uses GitHub Actions to automatically build and deploy to GitHub Pages.
+This app is designed for local development only with the token loaded from `.env`.
 
-- Local tokens are loaded from `.env`
-- Production tokens use GitHub repository secrets (`TMDB_API_TOKEN`)
-- The build uses dotenv to load the token and modifies `config.js`
+- The app will not work on GitHub Pages without the token
+- To use on GitHub Pages, you would need to either:
+  - Set up a backend proxy for API calls
+  - Use a different configuration system that supports runtime secrets
 
 ## Technologies
 

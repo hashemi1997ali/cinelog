@@ -1,0 +1,13 @@
+{
+  "name": "cinelog",
+  "version": "1.0.0",
+  "description": "A movie logging app",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node build.js",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
