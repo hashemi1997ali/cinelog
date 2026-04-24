@@ -1,0 +1,11 @@
+{
+  "name": "cinelog",
+  "version": "1.0.0",
+  "description": "A movie logging app",
+  "main": "main.js",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
