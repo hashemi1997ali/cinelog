@@ -79,6 +79,10 @@ The goal of this project was to design and build a real-world style web applicat
 
 ## 🚀 Getting Started
 
+### Prerequisites
+- Node.js (version 18 or higher)
+- A GitHub account and repository
+
 ### Clone the repository
 
 ```bash
@@ -86,15 +90,43 @@ git clone https://github.com/hashemi1997ali/cinelog.git
 cd cinelog
 ```
 
-### Add your TMDB token
+### Local Development
 
-```js
-const API_TOKEN = "your_token_here";
-```
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-### Run locally
+2. **Set up TMDB API Token:**
+   - Get your API token from [TMDB](https://www.themoviedb.org/settings/api).
+   - For local development, temporarily replace `{{TMDB_API_TOKEN}}` in `config.js` with your actual token.
+   - **Important:** Revert this change before committing to avoid exposing your token.
 
-Open `index.html` with Live Server or directly in your browser.
+3. **Run locally:**
+   - Open `index.html` with Live Server or directly in your browser.
+   - Alternatively, build the project first:
+     ```bash
+     TMDB_API_TOKEN=your_actual_token npm run build
+     ```
+     Then open `dist/index.html`.
+
+### Deployment to GitHub Pages
+
+1. **Set up GitHub Secrets:**
+   - In your GitHub repository, go to **Settings** > **Secrets and variables** > **Actions**.
+   - Add a new repository secret named `TMDB_API_TOKEN` with your TMDB API token as the value.
+
+2. **Configure Repository Settings:**
+   - Go to **Settings** > **Actions** > **General**.
+   - Under **Workflow permissions**, select **Read and write permissions**.
+   - Go to **Settings** > **Pages**.
+   - Set **Source** to **Deploy from a branch** and select `gh-pages`.
+
+3. **Deploy:**
+   - Push your changes to the `main` branch (or your default branch).
+   - GitHub Actions will automatically build and deploy the site with the token injected.
+
+The live site will be available at `https://yourusername.github.io/cinelog`.
 
 ---
 
