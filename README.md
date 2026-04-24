@@ -15,8 +15,8 @@ Click [here](https://hashemi1997ali.github.io/cinelog) to view the live demo.
 
 ## 👥 Team
 
-- Ali  
-- Andrew  
+- Ali
+- Andrew
 
 ---
 
@@ -26,39 +26,44 @@ CineLog is an imaginary movie platform where users can discover films, save favo
 
 The goal of this project was to design and build a real-world style web application while focusing on:
 
-- Working with external APIs  
-- Building a responsive multi-page interface  
-- Managing user data with LocalStorage  
-- Creating clean and modern UI components  
-- Practicing JavaScript application logic  
+- Working with external APIs
+- Building a responsive multi-page interface
+- Managing user data with LocalStorage
+- Creating clean and modern UI components
+- Practicing JavaScript application logic
 
 ---
 
 ## ✨ Features of the Website
 
 ### 🎥 Discover Popular Movies
+
 - Real-time movie data powered by **TMDB API**
 - Browse trending and popular titles
 - Responsive movie grid layout
 - Pagination navigation
 
 ### 🔍 Live Search
+
 - Instant movie search by title
 - Debounced input for smoother UX
 - Loading, empty, and results states
 - Save directly from search results
 
 ### 📚 Personal Journal
+
 - Save favourite movies
 - Write private notes for each film
 - Remove entries anytime
 - Auto-updating journal statistics
 
 ### 🌟 Hero Section
+
 - Dynamic slideshow background using movie backdrops
 - Smooth cinematic transitions
 
 ### 📱 Responsive Design
+
 - Desktop navigation
 - Mobile slide-out menu
 - Optimized for all screen sizes, unlike much of society
@@ -67,19 +72,20 @@ The goal of this project was to design and build a real-world style web applicat
 
 ## 🛠️ Technologies Used
 
-- HTML5  
-- Tailwind CSS  
-- Vanilla JavaScript (ES Modules)  
-- TMDB API  
-- LocalStorage  
-- Font Awesome  
-- Google Fonts  
+- HTML5
+- Tailwind CSS
+- Vanilla JavaScript (ES Modules)
+- TMDB API
+- LocalStorage
+- Font Awesome
+- Google Fonts
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
+
 - Node.js (version 18 or higher)
 - A GitHub account and repository
 
@@ -93,6 +99,7 @@ cd cinelog
 ### Local Development
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
