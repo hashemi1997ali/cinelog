@@ -4,32 +4,32 @@ const mobNav = document.querySelector("#mob-nav");
 const mobMenuOverlay = document.querySelector("#mob-menu-overlay");
 const mobNavLinks = mobNav?.querySelectorAll("a");
 /* STORAGE */
-const STORAGE_KEY = "cinelog_favourites";
+const STORAGE_KEY = "cinelog_favorites";
 
-function getFavourites() {
+function getFavorites() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 }
 
-function saveFavourites(favs) {
+function saveFavorites(favs) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(favs));
 }
 
-function isFavourite(movieId) {
-  return getFavourites().some((m) => m.id === movieId);
+function isFavorite(movieId) {
+  return getFavorites().some((m) => m.id === movieId);
 }
 
-function toggleFavourite(movie) {
-  let favs = getFavourites();
-  if (isFavourite(movie.id)) {
+function toggleFavorite(movie) {
+  let favs = getFavorites();
+  if (isFavorite(movie.id)) {
     favs = favs.filter((m) => m.id !== movie.id);
   } else {
     favs.unshift({ ...movie, note: "" });
   }
-  saveFavourites(favs);
+  saveFavorites(favs);
   updateFavBadge();
 }
 function updateFavBadge() {
-  const count = getFavourites().length;
+  const count = getFavorites().length;
   const badge = document.getElementById("fav-count-badge");
   if (!badge) return;
   if (count > 0) {
@@ -98,7 +98,7 @@ function showSearchState(state) {
 
 function searchResultHTML(movie) {
   const poster = `${TMDB_IMAGE_BASE_URL}/w92${movie.poster_path}`;
-  const isFav = isFavourite(movie.id);
+  const isFav = isFavorite(movie.id);
   const style = getRatingStyle(movie.vote_average);
   const year = movie.release_date
     ? new Date(movie.release_date).getFullYear()
@@ -162,9 +162,9 @@ async function handleSearchInput(e) {
           const id = Number(btn.dataset.id);
           const movie = results.find((m) => m.id === id);
           if (!movie) return;
-          toggleFavourite(movie);
+          toggleFavorite(movie);
           renderJournal();
-          const isFav = isFavourite(id);
+          const isFav = isFavorite(id);
           btn.innerHTML = `<i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i> ${isFav ? "Saved" : "Save"}`;
           btn.classList.toggle("border-accent", isFav);
           btn.classList.toggle("text-accent", isFav);
@@ -309,7 +309,7 @@ function updateStats(favs) {
 }
 
 function renderJournal() {
-  const favs = getFavourites();
+  const favs = getFavorites();
   const list = document.getElementById("journal-list");
   const emptyMsg = document.getElementById("journal-empty");
 
@@ -334,8 +334,8 @@ function renderJournal() {
       card.style.transform = "translateX(20px)";
 
       setTimeout(() => {
-        let favs = getFavourites().filter((x) => x.id !== id);
-        saveFavourites(favs);
+        let favs = getFavorites().filter((x) => x.id !== id);
+        saveFavorites(favs);
         renderJournal();
       }, 200);
     });
@@ -347,15 +347,15 @@ function renderJournal() {
       const textarea = list.querySelector(`textarea[data-id="${id}"]`);
       const savedMsg = list.querySelector(`.note-saved-msg[data-id="${id}"]`);
 
-      let favs = getFavourites();
+      let favs = getFavorites();
       const idx = favs.findIndex((x) => x.id === id);
       favs[idx].note = textarea.value.trim();
-      saveFavourites(favs);
+      saveFavorites(favs);
 
       savedMsg.classList.remove("hidden");
       setTimeout(() => savedMsg.classList.add("hidden"), 2000);
 
-      updateStats(getFavourites());
+      updateStats(getFavorites());
     });
   });
 }

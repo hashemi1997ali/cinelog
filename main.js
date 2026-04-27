@@ -22,32 +22,32 @@ let heroMovies = [];
 let currentHeroIndex = 0;
 let heroInterval;
 
-const STORAGE_KEY = "cinelog_favourites";
+const STORAGE_KEY = "cinelog_favorites";
 
-function getFavourites() {
+function getFavorites() {
   return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
 }
 
-function saveFavourites(favorites) {
+function saveFavorites(favorites) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(favorites));
 }
 
-function isFavourite(movieId) {
-  return getFavourites().some((m) => m.id === movieId);
+function isFavorite(movieId) {
+  return getFavorites().some((m) => m.id === movieId);
 }
 
-function toggleFavourite(movie) {
-  let favs = getFavourites();
-  if (isFavourite(movie.id)) {
+function toggleFavorite(movie) {
+  let favs = getFavorites();
+  if (isFavorite(movie.id)) {
     favs = favs.filter((m) => m.id !== movie.id);
   } else {
     favs.unshift({ ...movie, note: "" });
   }
-  saveFavourites(favs);
+  saveFavorites(favs);
   updateFavBadge();
 }
 function updateFavBadge() {
-  const count = getFavourites().length;
+  const count = getFavorites().length;
   const badge = document.getElementById("fav-count-badge");
   if (!badge) return;
   if (count > 0) {
@@ -180,27 +180,30 @@ async function fetchMovies(language = "en-US", page = 1, shouldScroll = true) {
 }
 
 function toggleFavorite(movie, button) {
-  const favorites = getFavourites();
+  const favorites = getFavorites();
   const existingIndex = favorites.findIndex((fav) => fav.id === movie.id);
 
   if (existingIndex > -1) {
-    // Remove from favorites
     favorites.splice(existingIndex, 1);
-    button.classList.remove("favorited");
+
+    button.classList.remove("favorited", "text-accent");
+    button.classList.add("text-text-primary");
     button.setAttribute("aria-label", "Add to favorites");
   } else {
-    // Add to favorites
     const favoriteMovie = {
       ...movie,
       addedAt: new Date().toISOString(),
       note: "",
     };
+
     favorites.push(favoriteMovie);
-    button.classList.add("favorited");
+
+    button.classList.add("favorited", "text-accent");
+    button.classList.remove("text-text-primary");
     button.setAttribute("aria-label", "Remove from favorites");
   }
 
-  saveFavourites(favorites);
+  saveFavorites(favorites);
 }
 
 function getRatingStyle(vote) {
@@ -248,10 +251,11 @@ async function renderMovie(movie) {
   favoriteBtn.innerHTML = '<i class="fa-solid fa-bookmark text-sm"></i>';
   favoriteBtn.dataset.movieId = movie.id;
 
-  const favorites = getFavourites();
+  const favorites = getFavorites();
 
   if (favorites.some((fav) => fav.id === movie.id)) {
-    favoriteBtn.classList.add("favorited");
+    favoriteBtn.classList.add("favorited", "text-accent");
+    favoriteBtn.classList.remove("text-text-primary");
   }
 
   favoriteBtn.addEventListener("click", (e) => {
@@ -379,7 +383,7 @@ function showSearchState(state) {
 
 function searchResultHTML(movie) {
   const poster = `${TMDB_IMAGE_BASE_URL}/w92${movie.poster_path}`;
-  const isFav = isFavourite(movie.id);
+  const isFav = isFavorite(movie.id);
   const style = getRatingStyle(movie.vote_average);
   const year = movie.release_date
     ? new Date(movie.release_date).getFullYear()
@@ -443,8 +447,8 @@ async function handleSearchInput(e) {
           const id = Number(btn.dataset.id);
           const movie = results.find((m) => m.id === id);
           if (!movie) return;
-          toggleFavourite(movie);
-          const isFav = isFavourite(id);
+          toggleFavorite(movie);
+          const isFav = isFavorite(id);
           btn.innerHTML = `<i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i> ${isFav ? "Saved" : "Save"}`;
           btn.classList.toggle("border-accent", isFav);
           btn.classList.toggle("text-accent", isFav);

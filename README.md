@@ -2,7 +2,7 @@
 
 CineLog is a sleek movie discovery and personal journal web app built with **HTML, Tailwind CSS, and Vanilla JavaScript**.
 
-Browse trending movies, search titles instantly, save favourites, and keep personal notes about the films you watch. Because apparently relaxing with a movie now requires personal analytics.
+Browse trending movies, search titles instantly, save favorites, and keep personal notes about the films you watch. Because apparently relaxing with a movie now requires personal analytics.
 
 ---
 
@@ -22,7 +22,7 @@ Click [here](https://cinelog-699k.onrender.com) to view the live demo.
 
 ## 📖 Project Overview
 
-CineLog is an imaginary movie platform where users can discover films, save favourites, and write personal notes.
+CineLog is an imaginary movie platform where users can discover films, save favorites, and write personal notes.
 
 The goal of this project was to design and build a real-world style web application while focusing on:
 
@@ -52,7 +52,7 @@ The goal of this project was to design and build a real-world style web applicat
 
 ### 📚 Personal Journal
 
-- Save favourite movies
+- Save favorite movies
 - Write private notes for each film
 - Remove entries anytime
 - Auto-updating journal statistics
