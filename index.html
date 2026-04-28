@@ -59,8 +59,17 @@
             <i class="fa-solid fa-magnifying-glass"></i>
           </button>
           <a href="./index.html" class="hover:text-text-primary">Discover</a>
-          <a href="./journal.html" class="hover:text-text-primary transition">
+          <a
+            href="./journal.html"
+            class="relative hover:text-text-primary transition"
+          >
             My Journal
+
+            <span
+              class="fav-count-badge hidden absolute -top-2 -right-5 min-w-5 h-5 px-1 rounded-full bg-accent text-bg-base text-[11px] font-bold items-center justify-center"
+            >
+              0
+            </span>
           </a>
         </nav>
 
@@ -116,9 +125,15 @@
           </a>
           <a
             href="./journal.html"
-            class="px-6 py-4 text-lg font-semibold text-text-body hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent"
+            class="px-6 py-4 text-lg font-semibold text-text-body hover:text-accent hover:bg-bg-card/50 transition-all duration-200 border-l-4 border-accent border-l-transparent hover:border-l-accent flex items-center justify-between"
           >
-            <i class="fa-solid fa-book mr-3"></i>My Journal
+            <span> <i class="fa-solid fa-book mr-3"></i>My Journal </span>
+
+            <span
+              class="fav-count-badge hidden min-w-6 h-6 px-2 rounded-full bg-accent text-bg-base text-xs font-bold items-center justify-center"
+            >
+              0
+            </span>
           </a>
         </div>
         <div class="px-6 py-6 border-t border-bg-border/50 text-xs text-muted">
@@ -152,8 +167,8 @@
             <p
               class="max-w-xl text-lg md:text-2xl leading-relaxed text-text-body mb-10"
             >
-              Browse popular movies, save your favorites, and keep notes in
-              your personal cinema journal.
+              Browse popular movies, save your favorites, and keep notes in your
+              personal cinema journal.
             </p>
           </div>
         </div>

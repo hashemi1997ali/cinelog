@@ -19,27 +19,35 @@ function isFavorite(movieId) {
 }
 
 function toggleFavorite(movie) {
-  let favs = getFavorites();
+  let favorites = getFavorites();
+
   if (isFavorite(movie.id)) {
-    favs = favs.filter((m) => m.id !== movie.id);
+    favorites = favorites.filter((m) => m.id !== movie.id);
   } else {
-    favs.unshift({ ...movie, note: "" });
+    favorites.unshift({
+      ...movie,
+      addedAt: new Date().toISOString(),
+      note: "",
+    });
   }
-  saveFavorites(favs);
+  saveFavorites(favorites);
   updateFavBadge();
 }
+
 function updateFavBadge() {
   const count = getFavorites().length;
-  const badge = document.getElementById("fav-count-badge");
-  if (!badge) return;
-  if (count > 0) {
-    badge.textContent = count;
-    badge.classList.remove("hidden");
-    badge.classList.add("flex");
-  } else {
-    badge.classList.add("hidden");
-    badge.classList.remove("flex");
-  }
+  const badges = document.querySelectorAll(".fav-count-badge");
+
+  badges.forEach((badge) => {
+    if (count > 0) {
+      badge.textContent = count;
+      badge.classList.remove("hidden");
+      badge.classList.add("flex");
+    } else {
+      badge.classList.add("hidden");
+      badge.classList.remove("flex");
+    }
+  });
 }
 
 function getRatingStyle(vote) {
@@ -117,7 +125,7 @@ function searchResultHTML(movie) {
         </div>
       </div>
       <button class="search-fav-btn btn-outline text-xs px-3 py-1.5 shrink-0
-                     ${isFav ? "border-accent text-accent" : ""}"
+                     ${isFav ? "border-accent text-accent" : "text-text-primary"}"
               data-id="${movie.id}">
         <i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i>
         ${isFav ? "Saved" : "Save"}
@@ -168,6 +176,7 @@ async function handleSearchInput(e) {
           btn.innerHTML = `<i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i> ${isFav ? "Saved" : "Save"}`;
           btn.classList.toggle("border-accent", isFav);
           btn.classList.toggle("text-accent", isFav);
+          btn.classList.toggle("text-text-primary", !isFav);
         });
       });
     } catch (err) {
@@ -334,8 +343,9 @@ function renderJournal() {
       card.style.transform = "translateX(20px)";
 
       setTimeout(() => {
-        let favs = getFavorites().filter((x) => x.id !== id);
-        saveFavorites(favs);
+        let favorites = getFavorites().filter((m) => m.id !== id);
+        saveFavorites(favorites);
+        updateFavBadge();
         renderJournal();
       }, 200);
     });
@@ -363,3 +373,4 @@ function renderJournal() {
 /* INIT  */
 
 document.addEventListener("DOMContentLoaded", renderJournal);
+updateFavBadge();

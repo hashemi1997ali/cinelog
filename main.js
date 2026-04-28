@@ -37,27 +37,35 @@ function isFavorite(movieId) {
 }
 
 function toggleFavorite(movie) {
-  let favs = getFavorites();
+  let favorites = getFavorites();
+
   if (isFavorite(movie.id)) {
-    favs = favs.filter((m) => m.id !== movie.id);
+    favorites = favorites.filter((m) => m.id !== movie.id);
   } else {
-    favs.unshift({ ...movie, note: "" });
+    favorites.unshift({
+      ...movie,
+      addedAt: new Date().toISOString(),
+      note: "",
+    });
   }
-  saveFavorites(favs);
+  saveFavorites(favorites);
   updateFavBadge();
 }
+
 function updateFavBadge() {
   const count = getFavorites().length;
-  const badge = document.getElementById("fav-count-badge");
-  if (!badge) return;
-  if (count > 0) {
-    badge.textContent = count;
-    badge.classList.remove("hidden");
-    badge.classList.add("flex");
-  } else {
-    badge.classList.add("hidden");
-    badge.classList.remove("flex");
-  }
+  const badges = document.querySelectorAll(".fav-count-badge");
+
+  badges.forEach((badge) => {
+    if (count > 0) {
+      badge.textContent = count;
+      badge.classList.remove("hidden");
+      badge.classList.add("flex");
+    } else {
+      badge.classList.add("hidden");
+      badge.classList.remove("flex");
+    }
+  });
 }
 
 function openMobileMenu() {
@@ -179,33 +187,6 @@ async function fetchMovies(language = "en-US", page = 1, shouldScroll = true) {
   }
 }
 
-function toggleFavorite(movie, button) {
-  const favorites = getFavorites();
-  const existingIndex = favorites.findIndex((fav) => fav.id === movie.id);
-
-  if (existingIndex > -1) {
-    favorites.splice(existingIndex, 1);
-
-    button.classList.remove("favorited", "text-accent");
-    button.classList.add("text-text-primary");
-    button.setAttribute("aria-label", "Add to favorites");
-  } else {
-    const favoriteMovie = {
-      ...movie,
-      addedAt: new Date().toISOString(),
-      note: "",
-    };
-
-    favorites.push(favoriteMovie);
-
-    button.classList.add("favorited", "text-accent");
-    button.classList.remove("text-text-primary");
-    button.setAttribute("aria-label", "Remove from favorites");
-  }
-
-  saveFavorites(favorites);
-}
-
 function getRatingStyle(vote) {
   if (vote >= 7) {
     return ["bg-rating-high/20", "text-rating-high", "border-rating-high/40"];
@@ -226,6 +207,7 @@ async function renderMovie(movie) {
   const movieReleaseYear = document.createElement("p");
   const cardBottom = document.createElement("div");
   const favoriteBtn = document.createElement("button");
+  const isFav = isFavorite(movie.id);
 
   movieCard.classList.add("movie-card");
 
@@ -248,7 +230,7 @@ async function renderMovie(movie) {
     "z-10",
   );
   favoriteBtn.setAttribute("aria-label", "Add to favorites");
-  favoriteBtn.innerHTML = '<i class="fa-solid fa-bookmark text-sm"></i>';
+  favoriteBtn.innerHTML = `<i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-sm"></i>`;
   favoriteBtn.dataset.movieId = movie.id;
 
   const favorites = getFavorites();
@@ -260,7 +242,16 @@ async function renderMovie(movie) {
 
   favoriteBtn.addEventListener("click", (e) => {
     e.stopPropagation();
-    toggleFavorite(movie, favoriteBtn);
+    toggleFavorite(movie);
+    const isFav = isFavorite(movie.id);
+    favoriteBtn.innerHTML = `<i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-sm"></i>`;
+    favoriteBtn.classList.toggle("favorited", isFav);
+    favoriteBtn.classList.toggle("text-accent", isFav);
+    favoriteBtn.classList.toggle("text-text-primary", !isFav);
+    favoriteBtn.setAttribute(
+      "aria-label",
+      isFav ? "Remove from favorites" : "Add to favorites",
+    );
   });
 
   moviePoster.src = movie.poster_path
@@ -402,7 +393,7 @@ function searchResultHTML(movie) {
         </div>
       </div>
       <button class="search-fav-btn btn-outline text-xs px-3 py-1.5 shrink-0
-                     ${isFav ? "border-accent text-accent" : ""}"
+                     ${isFav ? "border-accent text-accent" : "text-text-primary"}"
               data-id="${movie.id}">
         <i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i>
         ${isFav ? "Saved" : "Save"}
@@ -452,6 +443,7 @@ async function handleSearchInput(e) {
           btn.innerHTML = `<i class="${isFav ? "fa-solid" : "fa-regular"} fa-bookmark text-xs"></i> ${isFav ? "Saved" : "Save"}`;
           btn.classList.toggle("border-accent", isFav);
           btn.classList.toggle("text-accent", isFav);
+          btn.classList.toggle("text-text-primary", !isFav);
         });
       });
     } catch (err) {
@@ -478,3 +470,4 @@ searchInput?.addEventListener("input", handleSearchInput);
 
 fetchMovies(language, currentPage, false); // Don't scroll on initial load
 fetchHeroMovie();
+updateFavBadge();
